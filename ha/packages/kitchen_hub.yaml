@@ -1,0 +1,345 @@
+# Kitchen Hub: Home Assistant package (HANDOFF §6).
+#
+# Install:
+#   1. Copy this file to /config/packages/kitchen_hub.yaml
+#   2. In /config/configuration.yaml, make sure packages are enabled:
+#        homeassistant:
+#          packages: !include_dir_named packages
+#   3. In /config/secrets.yaml, add the door PIN (keep the quotes so a leading 0 survives):
+#        kitchen_door_pin: "1234"
+#   4. Settings → Tools → YAML → Check configuration, then Restart.
+#
+# The PIN lives in secrets.yaml rather than an input_text helper: helper values are visible
+# to every logged-in user (including the kitchen tablet's account); secrets are not.
+#
+# Entity IDs below match this household (checked 2026-10-23). If yours differ, change them here.
+
+counter:
+  kitchen_door_pin_failures:
+    name: "Kitchen Hub: wrong PIN attempts"
+    icon: mdi:lock-alert
+    initial: 0
+    step: 1
+    restore: true
+
+timer:
+  kitchen_door_relock:
+    name: "Kitchen Hub: relock countdown"
+    duration: "00:00:30" # keep in step with door.relockSeconds in the app's config.json
+    restore: true
+  kitchen_door_lockout:
+    name: "Kitchen Hub: PIN pad locked out"
+    duration: "00:05:00"
+    restore: true
+  kitchen_door_failure_window:
+    name: "Kitchen Hub: wrong-PIN window"
+    duration: "00:05:00"
+    restore: true
+
+# Meal suggestion rules, shared by every screen (HANDOFF §7 Meals).
+input_boolean:
+  kitchen_meal_rule_quick:
+    name: "Meal rule: quick weeknights"
+    icon: mdi:timer-sand
+  kitchen_meal_rule_grill:
+    name: "Meal rule: grill Saturday"
+    icon: mdi:grill
+  kitchen_meal_rule_slow:
+    name: "Meal rule: slow cooker Sunday"
+    icon: mdi:pot-steam
+  kitchen_meal_rule_leftovers:
+    name: "Meal rule: leftovers Wednesday"
+    icon: mdi:fridge
+
+script:
+  # Called by the kitchen screen with { pin }. Returns { ok: true } or { ok: false, reason }.
+  kitchen_unlock_front_door:
+    alias: "Kitchen Hub: unlock front door with PIN"
+    icon: mdi:lock-open-variant
+    mode: queued
+    max: 5
+    fields:
+      pin:
+        name: PIN
+        description: The PIN entered on the kitchen screen.
+        required: true
+        selector:
+          text:
+            type: password
+    variables:
+      expected: !secret kitchen_door_pin
+    sequence:
+      # Locked out after too many wrong PINs.
+      - if:
+          - condition: state
+            entity_id: timer.kitchen_door_lockout
+            state: active
+        then:
+          - variables:
+              result:
+                ok: false
+                reason: locked_out
+          - stop: PIN pad is locked out
+            response_variable: result
+
+      # Right PIN: unlock and start the relock countdown.
+      - if:
+          - condition: template
+            value_template: "{{ (pin | string) == (expected | string) }}"
+        then:
+          - action: counter.reset
+            target:
+              entity_id: counter.kitchen_door_pin_failures
+          - action: timer.cancel
+            target:
+              entity_id: timer.kitchen_door_failure_window
+          - action: lock.unlock
+            target:
+              entity_id: lock.front_door
+          - action: timer.start
+            target:
+              entity_id: timer.kitchen_door_relock
+          - variables:
+              result:
+                ok: true
+          - stop: Unlocked
+            response_variable: result
+
+      # Wrong PIN: count it; 3 within 5 minutes locks the pad for 5 minutes.
+      - if:
+          - condition: state
+            entity_id: timer.kitchen_door_failure_window
+            state: idle
+        then:
+          - action: timer.start
+            target:
+              entity_id: timer.kitchen_door_failure_window
+      - action: counter.increment
+        target:
+          entity_id: counter.kitchen_door_pin_failures
+      - event: kitchen_hub_bad_pin
+        event_data:
+          attempts: "{{ states('counter.kitchen_door_pin_failures') | int(0) }}"
+      - if:
+          - condition: numeric_state
+            entity_id: counter.kitchen_door_pin_failures
+            above: 2
+        then:
+          - action: timer.start
+            target:
+              entity_id: timer.kitchen_door_lockout
+          - action: counter.reset
+            target:
+              entity_id: counter.kitchen_door_pin_failures
+          - action: timer.cancel
+            target:
+              entity_id: timer.kitchen_door_failure_window
+          - event: kitchen_hub_pin_lockout
+          - variables:
+              result:
+                ok: false
+                reason: locked_out
+          - stop: Too many wrong PINs
+            response_variable: result
+      - variables:
+          result:
+            ok: false
+            reason: wrong_pin
+      - stop: Wrong PIN
+        response_variable: result
+
+automation:
+  - id: kitchen_hub_relock_front_door
+    alias: "Kitchen Hub: relock the front door"
+    description: Relocks after a kitchen-screen unlock. The lock's own auto-lock stays on as a backstop.
+    mode: single
+    triggers:
+      - trigger: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.kitchen_door_relock
+    conditions:
+      - condition: state
+        entity_id: lock.front_door
+        state: unlocked
+    actions:
+      - action: lock.lock
+        target:
+          entity_id: lock.front_door
+
+  - id: kitchen_hub_cancel_relock_when_locked
+    alias: "Kitchen Hub: stop the relock countdown once locked"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: lock.front_door
+        to: locked
+    conditions:
+      - condition: state
+        entity_id: timer.kitchen_door_relock
+        state: active
+    actions:
+      - action: timer.cancel
+        target:
+          entity_id: timer.kitchen_door_relock
+
+  - id: kitchen_hub_reset_pin_failures
+    alias: "Kitchen Hub: forget wrong PINs after 5 minutes"
+    mode: single
+    triggers:
+      - trigger: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.kitchen_door_failure_window
+    actions:
+      - action: counter.reset
+        target:
+          entity_id: counter.kitchen_door_pin_failures
+
+  # Refresh the school-run drive time every 5 minutes, only around drop-off and pick-up.
+  # Once this is installed, turn off polling on the Waze integration (Integration → ⋮ → System options).
+  - id: kitchen_hub_refresh_school_run
+    alias: "Kitchen Hub: refresh school-run drive time"
+    mode: single
+    triggers:
+      - trigger: time_pattern
+        minutes: "/5"
+    conditions:
+      - condition: time
+        weekday: [tue, thu]
+      - condition: or
+        conditions:
+          - condition: time
+            after: "07:30:00"
+            before: "09:45:00"
+          - condition: time
+            after: "11:15:00"
+            before: "13:00:00"
+    actions:
+      - action: homeassistant.update_entity
+        target:
+          entity_id: sensor.waze_school_drive
+
+  # ---- Flights: track flight numbers on the family calendar (Flightradar24 integration, HACS) ----
+  # Finds "DL 1234", "DL1234", "Delta 1234" (and AA, UA, WN, B6, AS, NK, F9) in event titles and notes
+  # over the next 12 hours, and adds each to Flightradar24's tracked list. The hub's flight card reads
+  # sensor.flightradar24_additional_tracked. Regexes avoid backslashes, which Jinja would unescape.
+  - id: kitchen_hub_track_calendar_flights
+    alias: "Kitchen Hub: track flights from the calendar"
+    mode: single
+    triggers:
+      - trigger: time_pattern
+        minutes: "7"
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: template
+        value_template: "{{ states('text.flightradar24_add_to_track') not in ['unknown', 'unavailable'] }}"
+    actions:
+      - action: calendar.get_events
+        target:
+          entity_id: calendar.family
+        data:
+          duration:
+            hours: 12
+        response_variable: cal
+      - variables:
+          wanted: >
+            {% set ns = namespace(f=[]) %}
+            {% for e in cal['calendar.family'].events %}
+              {% set text = ((e.summary or '') ~ ' ' ~ (e.description or '')) | upper %}
+              {% for m in text | regex_findall('(?<![A-Z0-9])(DL|AA|UA|WN|B6|AS|NK|F9) ?#?([0-9]{1,4})(?![0-9])') %}
+                {% set ns.f = ns.f + [m[0] ~ m[1]] %}
+              {% endfor %}
+              {% for n in text | regex_findall('DELTA(?: AIR LINES)?(?: FLIGHT)? ?#?([0-9]{1,4})(?![0-9])') %}
+                {% set ns.f = ns.f + ['DL' ~ n] %}
+              {% endfor %}
+            {% endfor %}
+            {{ ns.f | unique | list }}
+          tracked: >
+            {{ (state_attr('sensor.flightradar24_additional_tracked', 'flights') or [])
+               | map(attribute='flight_number') | select('string') | list }}
+      - repeat:
+          for_each: "{{ wanted | reject('in', tracked) | list }}"
+          sequence:
+            - action: text.set_value
+              target:
+                entity_id: text.flightradar24_add_to_track
+              data:
+                value: "{{ repeat.item }}"
+            - delay: "00:00:05"
+
+  # Flightradar24 tracks a number, not a date: soon after landing it follows the plane's next leg with the same
+  # number (seen with DL123 ATL→MDW then MDW→ATL). Stop tracking shortly after landing; the hub also only
+  # shows tracked flights that match a calendar event.
+  - id: kitchen_hub_untrack_landed_flight
+    alias: "Kitchen Hub: stop tracking a flight after it lands"
+    mode: parallel
+    triggers:
+      - trigger: event
+        event_type: flightradar24_tracked_landed
+    actions:
+      - delay: "00:30:00"
+      - action: text.set_value
+        target:
+          entity_id: text.flightradar24_remove_from_track
+        data:
+          value: "{{ trigger.event.data.flight_number or trigger.event.data.callsign }}"
+
+  # ---- Tablet: TCL Tab 8 Gen2 in Fully Kiosk (Fully Kiosk Browser integration, set up 2026-10-26) ----
+  # The integration has no motion sensor, so night mode uses Fully's own screen-off timer: Fully turns the
+  # screen off after 2 minutes idle and wakes it on motion (Fully: Motion Detection → Turn screen on on motion).
+
+  - id: kitchen_hub_doorbell_wakes_tablet
+    alias: "Kitchen Hub (tablet): doorbell wakes the screen"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: event.front_door_front_door_doorbell_chime
+    conditions:
+      - condition: template
+        value_template: "{{ trigger.from_state is not none and trigger.from_state.state != 'unavailable' }}"
+    actions:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.tcl_tab_8_gen2_screen
+      - action: button.press
+        target:
+          entity_id: button.tcl_tab_8_gen2_bring_to_foreground
+
+  - id: kitchen_hub_tablet_night_mode
+    alias: "Kitchen Hub (tablet): screen sleeps 10 PM–6 AM, wakes on motion"
+    mode: single
+    triggers:
+      - trigger: time
+        at: "22:00:00"
+    actions:
+      - action: number.set_value
+        target:
+          entity_id: number.tcl_tab_8_gen2_screen_off_timer
+        data:
+          value: 120
+
+  - id: kitchen_hub_tablet_day_mode
+    alias: "Kitchen Hub (tablet): screen stays on 6 AM–10 PM"
+    mode: single
+    triggers:
+      - trigger: time
+        at: "06:00:00"
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: time
+        after: "06:00:00"
+        before: "22:00:00"
+    actions:
+      - action: number.set_value
+        target:
+          entity_id: number.tcl_tab_8_gen2_screen_off_timer
+        data:
+          value: 0
+      - action: switch.turn_on
+        target:
+          entity_id: switch.tcl_tab_8_gen2_screen
+
+  # Kids' task reset (HANDOFF §6) is left out while the to-do lists are parked.

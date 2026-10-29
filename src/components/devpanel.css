@@ -1,0 +1,42 @@
+.dev-fab {
+  position: fixed;
+  right: 8px;
+  bottom: 6px;
+  z-index: 30;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 11px;
+  border: 1px dashed var(--dashed);
+  color: var(--subtle);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+.dev-fab:hover { opacity: 1; }
+
+.dev-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 45;
+  width: 300px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--raised);
+  border: 1.5px dashed var(--dashed);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dev-head { display: flex; justify-content: space-between; align-items: center; }
+.dev-close { width: 36px; height: 36px; border-radius: 12px; font-size: 24px; color: var(--muted); }
+.dev-btn { height: 46px; border-radius: 14px; background: var(--surface); font-size: 15px; font-weight: 700; }
+.dev-btn.primary { background: var(--accent); color: var(--on-accent); font-weight: 800; }
+.dev-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.dev-seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: 14px; background: var(--bg); }
+.dev-seg .btn { height: 38px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--text-soft); }
+.dev-seg .btn.on { background: var(--text); color: var(--on-accent); }
+.dev-note { font-size: 13px; line-height: 1.4; color: var(--muted); }
+.dev-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; }

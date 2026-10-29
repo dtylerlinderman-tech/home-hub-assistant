@@ -1,0 +1,171 @@
+.home { padding: 32px 40px; gap: 28px; }
+
+.home-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.home-clock { display: flex; flex-direction: column; gap: 4px; }
+.home-time-row { display: flex; align-items: baseline; gap: 10px; }
+.home-time { font-size: 104px; line-height: 0.95; font-weight: 700; letter-spacing: -0.04em; }
+.home-ampm { font-size: 28px; font-weight: 600; color: var(--muted); }
+.home-date { font-size: 24px; font-weight: 500; color: var(--muted); }
+.home-head-side { min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
+.home-head-right { display: flex; align-items: flex-end; gap: 28px; }
+
+.home-chips { display: flex; gap: 10px; padding-bottom: 6px; }
+.home-chip {
+  height: 68px; padding: 0 18px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border);
+  display: flex; flex-direction: column; justify-content: center; color: var(--text);
+}
+.home-chip-name { font-size: 13px; font-weight: 700; color: var(--muted); }
+.home-chip-val { font-size: 20px; font-weight: 800; }
+.home-chip-sub { font-size: 14px; font-weight: 700; color: var(--muted); }
+.home-chip-off { font-size: 14px; font-weight: 700; color: var(--subtle); }
+
+.home-weather { display: flex; align-items: center; gap: 16px; padding-bottom: 6px; color: var(--text); }
+.home-weather:hover { color: var(--text); }
+.home-weather-text { display: flex; flex-direction: column; }
+.home-weather-temp { font-size: 48px; font-weight: 700; line-height: 1; }
+.home-weather-sub { font-size: 16px; color: var(--muted); }
+
+.home-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.home-col { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+
+/* School run */
+.home-school { padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+.home-school-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.home-traffic { display: flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 12px; border-radius: 15px; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+.home-school-main { display: flex; flex-direction: column; gap: 2px; }
+.home-school-name { font-size: 22px; font-weight: 800; line-height: 1.2; }
+.home-drive-row { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; }
+.home-drive { font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; white-space: nowrap; }
+.home-drive-delta { font-size: 15px; font-weight: 600; color: var(--muted); }
+.home-drive-off { font-size: 17px; font-weight: 600; color: var(--subtle); padding: 12px 0; }
+.home-map { height: 140px; flex-shrink: 0; border-radius: 16px; overflow: hidden; background: var(--well); position: relative; }
+.home-map svg { display: block; }
+.home-map-label { position: absolute; left: 12px; top: 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.home-leave { border-radius: 16px; background: var(--accent-tint); padding: 12px 16px; display: flex; flex-direction: column; }
+.home-leave-by { font-size: 22px; font-weight: 800; color: var(--accent); }
+.home-leave-for { font-size: 15px; color: var(--text-soft); }
+
+/* Tonight's dinner */
+.home-dinner { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.home-dinner-img {
+  height: 150px; flex-shrink: 0; border-radius: 16px; background: var(--raised); overflow: hidden;
+  display: flex; align-items: center; justify-content: center; color: var(--muted);
+}
+.home-dinner-img img { width: 100%; height: 100%; object-fit: cover; }
+.home-dinner-text { display: flex; flex-direction: column; gap: 6px; }
+.home-dinner-name { font-size: 28px; font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; }
+.home-dinner-meta { font-size: 16px; color: var(--muted); }
+.home-cook { height: 64px; flex-shrink: 0; border-radius: 18px; background: var(--accent); color: var(--on-accent); font-size: 20px; font-weight: 800; gap: 10px; }
+.home-cook:hover { color: var(--on-accent); }
+.home-week { height: 48px; flex-shrink: 0; border-radius: 14px; background: var(--raised); color: var(--text); font-size: 16px; font-weight: 700; }
+.home-week:hover { color: var(--text); }
+
+/* This week (agenda) */
+.home-today { flex: 1; min-height: 170px; overflow: hidden; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.home-agenda { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; }
+.home-agenda::-webkit-scrollbar { display: none; }
+.home-agenda-day { display: flex; flex-direction: column; gap: 10px; }
+.home-agenda-name { font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.home-agenda-name.today { color: var(--accent); }
+.home-today-head { display: flex; justify-content: space-between; align-items: center; }
+.home-full-week { font-size: 15px; font-weight: 700; text-decoration: none; padding: 8px 0; }
+.home-today-empty { font-size: 17px; color: var(--muted); }
+.home-ev { display: flex; gap: 14px; align-items: flex-start; }
+.home-ev-time { width: 84px; flex-shrink: 0; font-size: 16px; font-weight: 700; color: var(--muted); padding-top: 2px; }
+.home-ev-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.home-ev-title { font-size: 19px; font-weight: 700; line-height: 1.25; }
+.home-ev-who { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
+
+/* Now playing: slim bar in the header, above the temperatures */
+.home-np {
+  max-width: 560px; min-width: 0; height: 52px; padding: 0 14px 0 6px; border-radius: 26px; color: var(--text);
+  display: flex; align-items: center; gap: 12px;
+}
+.home-np:hover { color: var(--text); }
+.home-np-icon {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: var(--well); color: var(--text-soft); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.home-np-icon img { width: 100%; height: 100%; object-fit: cover; }
+.home-np-status { flex-shrink: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--alert-text); }
+.home-np-title { flex: 1; min-width: 0; font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.home-np-app { font-weight: 600; color: var(--muted); }
+
+/* Flights (Flightradar24) */
+.home-flights { flex-shrink: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.home-flight { display: flex; flex-direction: column; gap: 6px; }
+.home-flight-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.home-flight-route { font-size: 19px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.home-flight-arrow { color: var(--muted); font-weight: 600; }
+.home-flight-num { flex-shrink: 0; font-size: 14px; font-weight: 700; color: var(--muted); }
+.home-flight-status { font-size: 15px; font-weight: 700; color: var(--text-soft); }
+.home-flight-status.delayed { color: var(--alert-text); }
+.home-flight-status.landed { color: var(--ok); }
+.home-flight-track { display: flex; align-items: center; gap: 10px; }
+.home-flight-code { font-size: 12px; font-weight: 800; color: var(--muted); }
+.home-flight-bar { position: relative; flex: 1; height: 6px; border-radius: 3px; background: var(--raised); }
+.home-flight-bar > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--accent); }
+.home-flight-bar svg { position: absolute; top: -6px; color: var(--accent); transform: rotate(45deg); }
+.home-flight-sub { font-size: 13px; color: var(--muted); }
+
+/* Games (Team Tracker) */
+.home-games { flex-shrink: 0; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+.home-game { display: flex; align-items: center; gap: 14px; min-height: 44px; }
+.home-game-logos { display: flex; flex-shrink: 0; }
+.home-game-logo {
+  width: 34px; height: 34px; border-radius: 17px; background: rgba(255, 250, 255, 0.92); overflow: hidden;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--on-accent);
+  box-shadow: 0 0 0 2px rgba(20, 16, 36, 0.9);
+}
+.home-game-logo + .home-game-logo { margin-left: -8px; }
+.home-game-logo img { width: 26px; height: 26px; object-fit: contain; }
+.home-game-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.home-game-title { font-size: 17px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.home-game-sub { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; }
+.home-game-sub.live { color: var(--alert-text); font-weight: 700; }
+.home-game-score { flex-shrink: 0; font-size: 22px; font-weight: 800; }
+.home-game-dash { color: var(--muted); margin: 0 4px; font-weight: 600; }
+
+/* Small linked card under the door (Vacuum) */
+.home-mini { color: var(--text); padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+.home-mini:hover { color: var(--text); }
+.home-mini-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.home-mini-note { font-size: 13px; font-weight: 600; color: var(--muted); }
+.home-mini-row { display: flex; align-items: center; gap: 14px; }
+.home-mini-icon {
+  width: 52px; height: 52px; flex-shrink: 0; border-radius: 14px; background: var(--well); color: var(--text-soft); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.home-mini-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.home-mini-status { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--alert-text); }
+.home-mini-title { font-size: 20px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Reminders */
+.home-rem { padding: 16px 24px; display: flex; flex-direction: column; gap: 6px; }
+.home-rem-item { justify-content: flex-start; gap: 12px; min-height: 44px; }
+.home-rem-text { display: flex; flex-direction: column; }
+.home-rem-title { font-size: 17px; font-weight: 700; }
+.home-rem-when { font-size: 14px; color: var(--muted); }
+.home-rem-empty { font-size: 16px; color: var(--muted); min-height: 44px; display: flex; align-items: center; }
+
+/* Front door */
+.home-door { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.home-snap {
+  height: 190px; flex-shrink: 0; border-radius: 16px; background: var(--well); color: var(--muted); overflow: hidden; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+}
+.home-snap:hover { color: var(--text-soft); }
+.home-snap-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.home-snap-text { font-size: 15px; font-weight: 600; }
+.home-lock { display: flex; align-items: center; gap: 14px; padding: 4px 0; }
+.home-lock-icon { width: 52px; height: 52px; flex-shrink: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+.home-lock-text { display: flex; flex-direction: column; }
+.home-lock-label { font-size: 24px; font-weight: 800; }
+.home-lock-sub { font-size: 14px; color: var(--muted); }
+.home-door-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.home-door-btn { height: 56px; border-radius: 16px; background: var(--raised); color: var(--text); font-size: 17px; font-weight: 700; }
+.home-door-btn:hover { color: var(--text); }
+
+/* Front door shares its column with the vacuum card when that's showing. */
+.home-col > .home-door { flex: 1; min-height: 0; }
+.home-vac-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 18px; line-height: 1.25; }

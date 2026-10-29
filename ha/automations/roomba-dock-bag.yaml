@@ -1,0 +1,60 @@
+# Phone alert when the Roomba's clean-base (dock) bag needs replacing.
+#
+# How to add it:
+#   Settings → Automations & scenes → + Create automation → Create new automation
+#   → ⋮ (top right) → Edit in YAML → replace everything with this file → Save.
+#
+# Before saving, change notify.mobile_app_YOUR_PHONE to your phone's notify action
+# (Settings → Tools → Actions, type "notify.mobile_app"; it appears once the
+# Home Assistant app is installed on your phone and signed in).
+#
+# After you put in a new bag, tap "I replaced it" on the kitchen screen's Vacuum
+# page (or press button.dj_roomba_reset_clean_base_bag) so the reminders stop.
+
+alias: "Kitchen Hub: Roomba dock bag needs replacing"
+description: >-
+  Notifies when the clean base reports a full bag, when Roomba+ says the bag is due
+  by run hours, and once each evening while it's still due.
+mode: single
+
+triggers:
+  - trigger: template
+    id: full
+    value_template: >-
+      {% set s = states('sensor.dj_roomba_clean_base_status') | lower %}
+      {{ s not in ['ready', 'unknown', 'unavailable'] and ('full' in s or 'bag' in s) }}
+    for: "00:01:00"
+  - trigger: template
+    id: due
+    value_template: >-
+      {{ 'clean_base_bag' in (state_attr('binary_sensor.dj_roomba_maintenance_due', 'due') or []) }}
+  - trigger: time
+    id: reminder
+    at: "18:00:00"
+
+conditions:
+  - condition: template
+    value_template: >-
+      {% set s = states('sensor.dj_roomba_clean_base_status') | lower %}
+      {{ (s not in ['ready', 'unknown', 'unavailable'] and ('full' in s or 'bag' in s))
+         or 'clean_base_bag' in (state_attr('binary_sensor.dj_roomba_maintenance_due', 'due') or []) }}
+
+actions:
+  - variables:
+      full: >-
+        {% set s = states('sensor.dj_roomba_clean_base_status') | lower %}
+        {{ s not in ['ready', 'unknown', 'unavailable'] and ('full' in s or 'bag' in s) }}
+  - action: notify.mobile_app_YOUR_PHONE
+    data:
+      title: "{{ 'Roomba dock bag is full' if full else 'Time to replace the Roomba dock bag' }}"
+      message: >-
+        {{ 'The clean base can''t empty the robot until the bag is replaced.' if full
+           else 'It''s past the usual replacement interval.' }}
+        Tap "I replaced it" on the kitchen screen afterwards.
+      data:
+        tag: roomba-dock-bag   # replaces the previous alert instead of stacking up
+  - action: persistent_notification.create
+    data:
+      notification_id: roomba-dock-bag
+      title: Roomba dock bag
+      message: "{{ 'The dock bag is full.' if full else 'The dock bag is due for replacement.' }}"

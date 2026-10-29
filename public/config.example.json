@@ -1,0 +1,118 @@
+{
+  "haUrl": "http://homeassistant.local",
+  "timezone": "America/New_York",
+  "weather": "weather.forecast_home",
+  "people": {
+    "Alex": "#6EA8E8",
+    "Sam": "#E58FB5",
+    "Kids": "#5FB3A6",
+    "Family": "#E8A33D"
+  },
+  "calendars": [
+    {
+      "entity": "calendar.family",
+      "person": "Family"
+    }
+  ],
+  "calendarSource": "iCloud",
+  "door": {
+    "camera": "camera.front_door",
+    "doorbellEvent": "event.front_door_chime",
+    "lock": "lock.front_door",
+    "unlockScript": "script.kitchen_unlock_front_door",
+    "relockSeconds": 30
+  },
+  "climate": [
+    {
+      "name": "Downstairs",
+      "entity": "climate.downstairs"
+    },
+    {
+      "name": "Upstairs",
+      "entity": "climate.upstairs"
+    }
+  ],
+  "climatePresets": [
+    "home",
+    "away",
+    "sleep"
+  ],
+  "schoolRun": {
+    "name": "Oak Hill School",
+    "address": "2400 Old Alabama Rd, Roswell, GA 30076",
+    "travelSensor": "sensor.waze_school_drive",
+    "days": [
+      "tue",
+      "thu"
+    ],
+    "dropoff": "09:30",
+    "pickup": "12:45",
+    "leaveBufferMin": 5,
+    "dropoffWindow": [
+      "07:30",
+      "09:45"
+    ],
+    "pickupWindow": [
+      "11:15",
+      "13:00"
+    ]
+  },
+  "tvs": [
+    {
+      "name": "Living room",
+      "remote": "remote.living_room_tv",
+      "player": "media_player.living_room_tv",
+      "cast": "media_player.living_room_tv_cast"
+    },
+    {
+      "name": "Bedroom",
+      "remote": "remote.bedroom_tv",
+      "player": "media_player.bedroom_tv",
+      "cast": "media_player.bedroom_tv_cast"
+    }
+  ],
+  "tvService": "YouTube TV",
+  "favoriteChannels": [
+    {
+      "name": "ESPN",
+      "deepLink": "TBD"
+    }
+  ],
+  "kids": [
+    {
+      "name": "Max",
+      "color": "#6EA8E8",
+      "todo": "todo.max_tasks"
+    },
+    {
+      "name": "Lily",
+      "color": "#B79CF0",
+      "todo": "todo.lily_tasks"
+    }
+  ],
+  "homeReminders": "todo.home_reminders",
+  "vacuum": {
+    "name": "Roomba",
+    "entity": "vacuum.roomba",
+    "entryId": "<roomba_plus config entry id>",
+    "battery": "sensor.roomba_battery",
+    "location": "device_tracker.roomba",
+    "phase": "sensor.roomba_phase",
+    "lastError": "sensor.roomba_last_error_code",
+    "roomsMap": "image.roomba_rooms_map",
+    "roomAreas": "sensor.roomba_room_areas",
+    "baseStatus": "sensor.roomba_clean_base_status",
+    "maintenance": "binary_sensor.roomba_maintenance_due",
+    "bagReset": "button.roomba_reset_clean_base_bag"
+  },
+  "mealie": {
+    "configEntryId": "TBD",
+    "mealTags": [
+      "Weeknight",
+      "Kids",
+      "Grill",
+      "Slow cooker"
+    ]
+  },
+  "notifyTarget": "notify.mobile_app_alexs_phone"
+}

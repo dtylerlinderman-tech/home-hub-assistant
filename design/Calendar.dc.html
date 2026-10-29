@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kitchen Hub – Calendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>body{margin:0}a{color:#E8A33D}a:hover{color:#F2C27A}</style>
+</helmet>
+<div style="width: 1280px; height: 800px; display: flex; background: #1B1A17; color: #F4EFE6; font-family: Manrope, system-ui, sans-serif; overflow: hidden">
+
+<nav aria-label="Main" style="width: 104px; flex-shrink: 0; box-sizing: border-box; padding: 28px 0; background: #141310; border-right: 1px solid #2E2B26; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<a href="Main.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg><span>Home</span></a>
+<a href="Calendar.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 700; background: #312E28; color: #F4EFE6"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #E8A33D"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span>Calendar</span></a>
+<a href="Meals.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3v6a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.2 0-3.5 2.5-3.5 6v4H17"></path></svg><span>Meals</span></a>
+<a href="Recipes.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path><path d="M4 21V5M8 7h7"></path></svg><span>Recipes</span></a>
+<a href="Tasks.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="m8 9 2 2 4-4M8 16h8"></path></svg><span>Tasks</span></a>
+<a href="Climate.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"></path><path d="M12 9v8"></path></svg><span>Climate</span></a>
+<a href="TV.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 18v3"></path></svg><span>TV</span></a>
+<div style="flex: 1"></div>
+<a href="Door.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #5FB3A6"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span>Door</span></a>
+</nav>
+
+<main style="flex: 1; min-width: 0; box-sizing: border-box; padding: 28px 36px; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; justify-content: space-between; align-items: center; gap: 20px">
+<div style="display: flex; align-items: center; gap: 14px">
+<button type="button" onClick="{{prevWeek}}" aria-label="Previous week" style="all: unset; cursor: pointer; width: 52px; height: 52px; border-radius: 16px; background: #26241F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button type="button" onClick="{{nextWeek}}" aria-label="Next week" style="all: unset; cursor: pointer; width: 52px; height: 52px; border-radius: 16px; background: #26241F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+<div style="display: flex; flex-direction: column; margin-left: 6px">
+<span style="font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1">{{rangeLabel}}</span>
+<span style="font-size: 15px; color: #A8A196">Family calendar · synced from Google Calendar</span>
+</div>
+<sc-if value="{{notThisWeek}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{goToday}}" style="all: unset; cursor: pointer; height: 44px; padding: 0 18px; border-radius: 22px; background: #312E28; font-size: 15px; font-weight: 700; display: flex; align-items: center; margin-left: 8px">Today</button>
+</sc-if>
+</div>
+<div style="display: flex; gap: 18px; flex-wrap: wrap">
+<sc-for list="{{legend}}" as="l" hint-placeholder-count="4"><span style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #D6D0C4"><span style="width: 12px; height: 12px; border-radius: 6px; background: {{l.color}}"></span>{{l.name}}</span></sc-for>
+</div>
+</header>
+
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<section aria-label="{{d.aria}}" style="min-height: 0; border-radius: 20px; background: {{d.bg}}; border: 1.5px solid {{d.border}}; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; align-items: flex-start; padding: 0 4px 4px">
+<span style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: {{d.dayColor}}">{{d.dow}}</span>
+<span style="font-size: 30px; font-weight: 800; line-height: 1.1">{{d.num}}</span>
+</div>
+<sc-for list="{{d.events}}" as="ev" hint-placeholder-count="2">
+<div style="border-radius: 14px; background: #312E28; padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 4px">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #D6D0C4; font-variant-numeric: tabular-nums"><span style="width: 9px; height: 9px; border-radius: 5px; flex-shrink: 0; background: {{ev.color}}"></span>{{ev.time}}</span>
+<span style="font-size: 15px; font-weight: 700; line-height: 1.25">{{ev.title}}</span>
+</div>
+</sc-for>
+<sc-if value="{{d.none}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: #8C867B; padding: 0 4px">Nothing scheduled</span></sc-if>
+<div style="flex: 1"></div>
+<sc-if value="{{d.hasDinner}}" hint-placeholder-val="{{ true }}">
+<a href="Meals.dc.html" style="text-decoration: none; border-top: 1px solid #3A362F; padding: 10px 4px 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #E8A33D">Dinner</span>
+<span style="font-size: 14px; font-weight: 600; color: #F4EFE6; line-height: 1.3">{{d.dinner}}</span>
+</a>
+</sc-if>
+</section>
+</sc-for>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { offset: 0 };
+    this.people = { Family: '#E8A33D', Alex: '#6EA8E8', Sam: '#E58FB5', Kids: '#5FB3A6' };
+    this.events = [
+      [{ time: '5:30 PM', title: 'Flag football practice', who: 'Kids' }],
+      [{ time: '7:30 AM', title: 'School drop-off', who: 'Alex' }, { time: '5:30 PM', title: 'Flag football practice', who: 'Kids' }, { time: '7:00 PM', title: 'Book club', who: 'Sam' }],
+      [{ time: '4:00 PM', title: 'Grocery pickup', who: 'Sam' }],
+      [{ time: '5:30 PM', title: 'Flag football practice', who: 'Kids' }],
+      [{ time: '7:00 PM', title: 'Pizza & movie night', who: 'Family' }],
+      [{ time: '9:00 AM', title: 'Flag football game', who: 'Kids' }, { time: '6:00 PM', title: 'Dinner with friends', who: 'Family' }],
+      [{ time: '10:00 AM', title: 'Yard work', who: 'Alex' }]
+    ];
+    this.dinners = ['Turkey tacos', 'Sheet-pan chicken fajitas', 'Chicken stir-fry', 'Breakfast for dinner', 'Homemade pizza night', 'Grilled salmon & rice', 'Slow cooker pot roast'];
+  }
+  renderVals() {
+    const off = this.state.offset;
+    const base = new Date(2026, 9, 19 + off * 7);
+    const end = new Date(2026, 9, 25 + off * 7);
+    const mo = (d) => d.toLocaleDateString('en-US', { month: 'long' });
+    const rangeLabel = mo(base) === mo(end)
+      ? mo(base) + ' ' + base.getDate() + ' – ' + end.getDate()
+      : mo(base) + ' ' + base.getDate() + ' – ' + mo(end) + ' ' + end.getDate();
+    const dows = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const days = dows.map((dow, i) => {
+      const date = new Date(2026, 9, 19 + off * 7 + i);
+      const isToday = off === 0 && i === 1;
+      const evs = off === 0 ? this.events[i] : [];
+      return {
+        dow,
+        num: date.getDate(),
+        aria: dow + ' ' + date.getDate(),
+        bg: isToday ? '#2E2619' : '#26241F',
+        border: isToday ? '#E8A33D' : '#2E2B26',
+        dayColor: isToday ? '#E8A33D' : '#A8A196',
+        events: evs.map((e) => ({ ...e, color: this.people[e.who] })),
+        none: evs.length === 0,
+        hasDinner: off === 0,
+        dinner: this.dinners[i]
+      };
+    });
+    return {
+      rangeLabel,
+      days,
+      notThisWeek: off !== 0,
+      legend: Object.keys(this.people).map((name) => ({ name, color: this.people[name] })),
+      prevWeek: () => this.setState({ offset: off - 1 }),
+      nextWeek: () => this.setState({ offset: off + 1 }),
+      goToday: () => this.setState({ offset: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

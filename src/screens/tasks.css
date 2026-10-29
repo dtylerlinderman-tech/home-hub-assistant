@@ -1,0 +1,30 @@
+.tasks { padding: 28px 36px; gap: 20px; }
+.tasks-head { display: flex; flex-direction: column; gap: 2px; }
+
+.tasks-grid { flex: 1; min-height: 0; display: grid; gap: 20px; }
+.tasks-kid { border-radius: 28px; padding: 24px 26px; display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+.tasks-kid-head { display: flex; align-items: center; gap: 16px; }
+.tasks-avatar {
+  width: 60px; height: 60px; flex-shrink: 0; border-radius: 30px; color: var(--on-accent);
+  font-size: 28px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+}
+.tasks-kid-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.tasks-kid-row { display: flex; justify-content: space-between; align-items: baseline; }
+.tasks-kid-name { font-size: 32px; font-weight: 800; letter-spacing: -0.01em; }
+.tasks-progress-text { font-size: 17px; font-weight: 700; color: var(--text-soft); }
+.tasks-bar { height: 12px; border-radius: 6px; background: var(--border-strong); display: flex; overflow: hidden; }
+.tasks-bar span { height: 100%; border-radius: 6px; transition: width 300ms ease; }
+
+.tasks-done {
+  border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+  font-size: 20px; font-weight: 800; animation: done-pop 420ms cubic-bezier(.2, 1.4, .4, 1);
+}
+.tasks-star { animation: star-spin 700ms ease-out; }
+@keyframes done-pop { from { transform: scale(0.85); opacity: 0; } }
+@keyframes star-spin { from { transform: rotate(-120deg) scale(0.4); } }
+@media (prefers-reduced-motion: reduce) { .tasks-done, .tasks-star { animation: none; } }
+
+.tasks-sections { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.tasks-section { display: flex; flex-direction: column; gap: 8px; }
+.tasks-item { justify-content: flex-start; min-height: 52px; flex-shrink: 0; padding: 0 16px; border-radius: 16px; gap: 16px; }
+.tasks-label { font-size: 21px; font-weight: 700; }

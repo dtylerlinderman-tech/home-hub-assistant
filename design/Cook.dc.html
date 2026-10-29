@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kitchen Hub – Cook mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>body{margin:0}a{color:#E8A33D}a:hover{color:#F2C27A}</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; display: flex; flex-direction: column; background: #1B1A17; color: #F4EFE6; font-family: Manrope, system-ui, sans-serif; overflow: hidden">
+
+<header style="height: 84px; flex-shrink: 0; box-sizing: border-box; padding: 0 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid #2E2B26">
+<a href="Recipes.dc.html" style="height: 52px; padding: 0 18px 0 12px; border-radius: 16px; background: #26241F; color: #F4EFE6; text-decoration: none; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 6px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Recipes</a>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="font-size: 22px; font-weight: 800; letter-spacing: -0.01em">Sheet-pan chicken fajitas</span>
+<span style="font-size: 14px; color: #A8A196">Serves 4 · 35 min · Screen stays on while cooking</span>
+</div>
+<span style="font-size: 18px; font-weight: 700; color: #A8A196; font-variant-numeric: tabular-nums">Step {{stepNum}} of {{stepCount}}</span>
+<a href="Main.dc.html" style="height: 52px; padding: 0 22px; border-radius: 16px; background: #26241F; color: #F4EFE6; text-decoration: none; font-size: 16px; font-weight: 700; display: flex; align-items: center">Done</a>
+</header>
+
+<div style="flex: 1; min-height: 0; display: flex">
+
+<main style="flex: 1; min-width: 0; box-sizing: border-box; padding: 28px 36px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; gap: 8px">
+<sc-for list="{{segments}}" as="seg" hint-placeholder-count="7">
+<button type="button" onClick="{{seg.go}}" aria-label="{{seg.aria}}" style="all: unset; cursor: pointer; flex: 1; height: 28px; display: flex; align-items: center"><span style="width: 100%; height: 8px; border-radius: 4px; background: {{seg.color}}"></span></button>
+</sc-for>
+</div>
+
+<span style="font-size: 16px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #E8A33D">Step {{stepNum}}</span>
+<p style="margin: 0; font-size: 40px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; max-width: 820px">{{stepText}}</p>
+
+<sc-if value="{{hasUses}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{uses}}" as="u" hint-placeholder-count="3"><span style="padding: 10px 16px; border-radius: 999px; background: #26241F; border: 1px solid #3A362F; font-size: 16px; font-weight: 600">{{u}}</span></sc-for>
+</div>
+</sc-if>
+
+<div style="flex: 1"></div>
+
+<sc-if value="{{hasTimer}}" hint-placeholder-val="{{ true }}">
+<div style="background: #26241F; border: 1px solid #2E2B26; border-radius: 24px; padding: 18px 24px; display: flex; align-items: center; gap: 22px">
+<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6"></path></svg>
+<div style="display: flex; flex-direction: column; flex: 1">
+<span style="font-size: 52px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: {{timerColor}}">{{timerText}}</span>
+<span style="font-size: 15px; color: #A8A196">{{timerLabel}}</span>
+</div>
+<button type="button" onClick="{{resetTimer}}" style="all: unset; cursor: pointer; height: 60px; padding: 0 22px; border-radius: 18px; background: #312E28; font-size: 17px; font-weight: 700; display: flex; align-items: center">Reset</button>
+<button type="button" onClick="{{toggleTimer}}" style="all: unset; cursor: pointer; height: 60px; min-width: 140px; padding: 0 22px; box-sizing: border-box; border-radius: 18px; background: #E8A33D; color: #1B1A17; font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center">{{timerAction}}</button>
+</div>
+</sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<button type="button" onClick="{{prev}}" style="all: unset; cursor: pointer; height: 80px; border-radius: 22px; background: #26241F; border: 1px solid #3A362F; color: {{prevColor}}; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Back</button>
+<button type="button" onClick="{{next}}" style="all: unset; cursor: pointer; height: 80px; border-radius: 22px; background: #E8A33D; color: #1B1A17; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px">{{nextLabel}}<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></button>
+</div>
+</main>
+
+<aside aria-label="Ingredients" style="width: 380px; flex-shrink: 0; box-sizing: border-box; padding: 24px 24px 24px 20px; border-left: 1px solid #2E2B26; display: flex; flex-direction: column; gap: 10px; overflow-y: auto">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 4px">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8A196">Ingredients</span>
+<span style="font-size: 14px; font-weight: 700; color: #A8A196">{{gotCount}} of {{ingCount}} ready</span>
+</div>
+<sc-for list="{{ingredients}}" as="ing" hint-placeholder-count="10">
+<button type="button" onClick="{{ing.toggle}}" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 2px 4px; border-radius: 12px; background: {{ing.rowBg}}">
+<span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 8px; box-sizing: border-box; border: 2px solid {{ing.ring}}; background: {{ing.fill}}; display: flex; align-items: center; justify-content: center; color: #1B1A17"><sc-if value="{{ing.got}}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"></path></svg></sc-if></span>
+<span style="font-size: 17px; line-height: 1.3; color: {{ing.color}}"><strong style="font-weight: 800">{{ing.qty}}</strong> {{ing.name}}</span>
+</button>
+</sc-for>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.ings = [
+      { id: 'chicken', qty: '1½ lb', name: 'chicken breast, thinly sliced' },
+      { id: 'peppers', qty: '3', name: 'bell peppers, sliced' },
+      { id: 'onion', qty: '1', name: 'red onion, sliced' },
+      { id: 'oil', qty: '3 tbsp', name: 'olive oil' },
+      { id: 'chili', qty: '2 tsp', name: 'chili powder' },
+      { id: 'cumin', qty: '1 tsp', name: 'ground cumin' },
+      { id: 'paprika', qty: '1 tsp', name: 'smoked paprika' },
+      { id: 'garlic', qty: '1 tsp', name: 'garlic powder' },
+      { id: 'salt', qty: '1 tsp', name: 'kosher salt' },
+      { id: 'lime', qty: '1', name: 'lime' },
+      { id: 'tortillas', qty: '8', name: 'flour tortillas' },
+      { id: 'toppings', qty: '', name: 'Sour cream, salsa, avocado' }
+    ];
+    this.steps = [
+      { text: 'Heat the oven to 425°F. Line a large sheet pan with foil or parchment.', uses: [] },
+      { text: 'Stir the chili powder, cumin, smoked paprika, garlic powder and salt together in a small bowl.', uses: ['chili', 'cumin', 'paprika', 'garlic', 'salt'] },
+      { text: 'Toss the chicken, peppers and onion with the olive oil and spice mix right on the pan. Spread into one even layer.', uses: ['chicken', 'peppers', 'onion', 'oil'] },
+      { text: 'Roast for 20 minutes, stirring once halfway through, until the chicken is cooked through.', uses: [], timer: 1200, timerLabel: 'Roast' },
+      { text: 'Wrap the tortillas in foil and warm them in the oven for the last 5 minutes.', uses: ['tortillas'], timer: 300, timerLabel: 'Warm tortillas' },
+      { text: 'Squeeze the lime over the pan and toss everything together.', uses: ['lime'] },
+      { text: 'Fill the tortillas at the table and top with sour cream, salsa and avocado.', uses: ['toppings'] }
+    ];
+    this.state = { step: 3, remaining: 1200, running: false, got: {} };
+  }
+  componentWillUnmount() { clearInterval(this.tick); }
+  goTo(i) {
+    const n = Math.max(0, Math.min(this.steps.length - 1, i));
+    clearInterval(this.tick);
+    this.setState({ step: n, remaining: this.steps[n].timer || 0, running: false });
+  }
+  toggleTimer() {
+    if (this.state.running) { clearInterval(this.tick); this.setState({ running: false }); return; }
+    if (this.state.remaining <= 0) return;
+    this.setState({ running: true });
+    this.tick = setInterval(() => {
+      const r = this.state.remaining - 1;
+      if (r <= 0) { clearInterval(this.tick); this.setState({ remaining: 0, running: false }); }
+      else this.setState({ remaining: r });
+    }, 1000);
+  }
+  renderVals() {
+    const s = this.state;
+    const cur = this.steps[s.step];
+    const byId = {};
+    this.ings.forEach((x) => { byId[x.id] = x; });
+    const used = {};
+    cur.uses.forEach((id) => { used[id] = true; });
+    const ingredients = this.ings.map((x) => {
+      const got = !!s.got[x.id];
+      const hot = !!used[x.id];
+      return {
+        ...x,
+        got,
+        ring: got ? '#5FB3A6' : '#6B665C',
+        fill: got ? '#5FB3A6' : 'transparent',
+        color: got ? '#8C867B' : '#F4EFE6',
+        rowBg: hot ? '#33291A' : 'transparent',
+        toggle: () => this.setState({ got: { ...s.got, [x.id]: !got } })
+      };
+    });
+    const segments = this.steps.map((st, i) => ({
+      color: i < s.step ? '#8A6528' : i === s.step ? '#E8A33D' : '#3A362F',
+      aria: 'Go to step ' + (i + 1),
+      go: () => this.goTo(i)
+    }));
+    const mm = Math.floor(s.remaining / 60);
+    const ss = String(s.remaining % 60).padStart(2, '0');
+    const last = s.step === this.steps.length - 1;
+    return {
+      stepNum: s.step + 1,
+      stepCount: this.steps.length,
+      stepText: cur.text,
+      uses: cur.uses.map((id) => (byId[id].qty ? byId[id].qty + ' ' : '') + byId[id].name),
+      hasUses: cur.uses.length > 0,
+      hasTimer: !!cur.timer,
+      timerText: s.remaining === 0 && cur.timer ? 'Done!' : mm + ':' + ss,
+      timerColor: s.remaining === 0 ? '#5FB3A6' : '#F4EFE6',
+      timerLabel: (cur.timerLabel || 'Timer') + (s.running ? ' · running' : ''),
+      timerAction: s.running ? 'Pause' : 'Start',
+      toggleTimer: () => this.toggleTimer(),
+      resetTimer: () => { clearInterval(this.tick); this.setState({ remaining: cur.timer || 0, running: false }); },
+      segments,
+      ingredients,
+      ingCount: this.ings.length,
+      gotCount: Object.keys(s.got).filter((k) => s.got[k]).length,
+      prev: () => this.goTo(s.step - 1),
+      next: () => this.goTo(s.step + 1),
+      prevColor: s.step === 0 ? '#6B665C' : '#F4EFE6',
+      nextLabel: last ? 'Last step' : 'Next step'
+    };
+  }
+}
+</script>
+</body>
+</html>

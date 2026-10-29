@@ -1,0 +1,35 @@
+.climate { padding: 28px 36px; gap: 20px; }
+.climate-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.climate-title { display: flex; flex-direction: column; gap: 2px; }
+.climate-presets { display: flex; align-items: center; gap: 10px; }
+.climate-presets-label { font-size: 14px; font-weight: 700; color: var(--muted); margin-right: 4px; }
+.climate-preset { height: 52px; padding: 0 22px; border-radius: 26px; background: var(--surface); color: var(--text); font-size: 17px; font-weight: 800; }
+.climate-preset.on { background: var(--accent); color: var(--on-accent); }
+
+.climate-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.climate-zone { border-radius: 28px; padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; }
+.climate-zone-head { display: flex; justify-content: space-between; align-items: center; }
+.climate-name { font-size: 24px; font-weight: 800; }
+.climate-status { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 18px; font-size: 15px; font-weight: 800; }
+
+.climate-temps { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.climate-now { display: flex; flex-direction: column; }
+.climate-now-label { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.climate-now-temp { font-size: 112px; font-weight: 700; line-height: 1; letter-spacing: -0.04em; }
+.climate-humidity { font-size: 15px; color: var(--muted); }
+.climate-stepper { display: flex; align-items: center; gap: 14px; }
+.climate-step { width: 72px; height: 72px; border-radius: 36px; background: var(--raised); }
+.climate-step:disabled { opacity: 0.4; }
+.climate-set { min-width: 104px; display: flex; flex-direction: column; align-items: center; }
+.climate-set-label { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.climate-set-val { font-size: 52px; font-weight: 800; line-height: 1.05; white-space: nowrap; }
+.climate-set-val.range { font-size: 38px; line-height: 1.45; }
+
+.climate-mode { display: flex; flex-direction: column; gap: 8px; }
+.climate-mode-label { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.climate-modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 18px; }
+.climate-modes .btn { height: 52px; border-radius: 14px; font-size: 17px; }
+.climate-fan { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.climate-fan-label { font-size: 17px; font-weight: 700; }
+.climate-fans { border-radius: 16px; }
+.climate-fans .btn { height: 44px; padding: 0 22px; border-radius: 12px; font-size: 16px; }

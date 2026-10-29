@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kitchen Hub – This week's meals</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<style>body{margin:0}a{color:#E8A33D}a:hover{color:#F2C27A}</style>
+</helmet>
+<div style="width: 1280px; height: 800px; display: flex; background: #1B1A17; color: #F4EFE6; font-family: Manrope, system-ui, sans-serif; overflow: hidden">
+
+<nav aria-label="Main" style="width: 104px; flex-shrink: 0; box-sizing: border-box; padding: 28px 0; background: #141310; border-right: 1px solid #2E2B26; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<a href="Main.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg><span>Home</span></a>
+<a href="Calendar.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span>Calendar</span></a>
+<a href="Meals.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 700; background: #312E28; color: #F4EFE6"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #E8A33D"><path d="M5 3v6a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.2 0-3.5 2.5-3.5 6v4H17"></path></svg><span>Meals</span></a>
+<a href="Recipes.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path><path d="M4 21V5M8 7h7"></path></svg><span>Recipes</span></a>
+<a href="Tasks.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="m8 9 2 2 4-4M8 16h8"></path></svg><span>Tasks</span></a>
+<a href="Climate.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"></path><path d="M12 9v8"></path></svg><span>Climate</span></a>
+<a href="TV.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="13" rx="2"></rect><path d="M8 21h8M12 18v3"></path></svg><span>TV</span></a>
+<div style="flex: 1"></div>
+<a href="Door.dc.html" style="width: 80px; height: 72px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: #A8A196"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: #5FB3A6"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg><span>Door</span></a>
+</nav>
+
+<main style="flex: 1; min-width: 0; box-sizing: border-box; padding: 28px 36px; display: flex; flex-direction: column; gap: 20px">
+<header style="display: flex; justify-content: space-between; align-items: center; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 40px; font-weight: 800; letter-spacing: -0.02em">This week</span>
+<span style="font-size: 17px; color: #A8A196">October 19 – 25 · {{toast}}</span>
+</div>
+<div style="display: flex; gap: 12px">
+<button type="button" onClick="{{sendList}}" style="all: unset; cursor: pointer; height: 56px; padding: 0 22px; border-radius: 18px; background: #312E28; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.5 11h11L21 7H6.2"></path><circle cx="9" cy="19" r="1.5"></circle><circle cx="17" cy="19" r="1.5"></circle></svg>Grocery list</button>
+<button type="button" onClick="{{shuffle}}" style="all: unset; cursor: pointer; height: 56px; padding: 0 22px; border-radius: 18px; background: #E8A33D; color: #1B1A17; font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h3c4 0 6 10 10 10h5M3 17h3c1.5 0 2.7-1.4 3.8-3.2M14.2 10.2C15.3 8.4 16.5 7 18 7h3M18 4l3 3-3 3M18 14l3 3-3 3"></path></svg>Suggest a new week</button>
+</div>
+</header>
+
+<div style="flex: 1; min-height: 0; display: flex; gap: 24px">
+<section aria-label="Meal plan" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+<div style="flex: 1; min-height: 0; box-sizing: border-box; padding: 0 12px 0 20px; border-radius: 20px; background: {{d.bg}}; border: 1.5px solid {{d.border}}; display: flex; align-items: center; gap: 20px">
+<div style="width: 56px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; line-height: 1.1">
+<span style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: {{d.dayColor}}">{{d.day}}</span>
+<span style="font-size: 24px; font-weight: 800">{{d.date}}</span>
+</div>
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 21px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{d.name}}</span>
+<span style="font-size: 14px; color: #A8A196">{{d.meta}}</span>
+</div>
+<sc-if value="{{d.isToday}}" hint-placeholder-val="{{ false }}">
+<a href="Cook.dc.html" style="height: 48px; padding: 0 18px; border-radius: 14px; background: #E8A33D; color: #1B1A17; text-decoration: none; font-size: 15px; font-weight: 800; display: flex; align-items: center">Tonight · Cook</a>
+</sc-if>
+<button type="button" onClick="{{d.swap}}" aria-label="{{d.swapLabel}}" style="all: unset; cursor: pointer; width: 52px; height: 52px; flex-shrink: 0; border-radius: 14px; background: #312E28; color: {{d.swapColor}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-4M4 4v4h4M4 13a8 8 0 0 0 14.9 4M20 20v-4h-4"></path></svg></button>
+</div>
+</sc-for>
+</section>
+
+<aside style="width: 330px; flex-shrink: 0; background: #26241F; border: 1px solid #2E2B26; border-radius: 24px; padding: 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #A8A196">Suggestion rules</span>
+<sc-for list="{{rules}}" as="r" hint-placeholder-count="4">
+<button type="button" onClick="{{r.toggle}}" role="switch" aria-checked="{{r.on}}" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 14px; min-height: 52px">
+<span style="flex: 1; display: flex; flex-direction: column"><span style="font-size: 17px; font-weight: 700">{{r.label}}</span><span style="font-size: 13px; color: #A8A196">{{r.sub}}</span></span>
+<span style="width: 52px; height: 30px; flex-shrink: 0; border-radius: 15px; background: {{r.track}}; display: flex; align-items: center; justify-content: {{r.align}}; padding: 0 3px; box-sizing: border-box"><span style="width: 24px; height: 24px; border-radius: 12px; background: #F4EFE6"></span></span>
+</button>
+</sc-for>
+<div style="flex: 1"></div>
+<div style="border-top: 1px solid #3A362F; padding-top: 14px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 17px; font-weight: 700">Picking from {{poolCount}} family meals</span>
+<span style="font-size: 14px; color: #A8A196">Rules apply when you suggest or swap.</span>
+</div>
+<a href="Recipes.dc.html" style="height: 52px; border-radius: 16px; background: #312E28; color: #F4EFE6; text-decoration: none; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center">Manage meal list</a>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.pool = [
+      { name: 'Sheet-pan chicken fajitas', mins: 35, tags: ['Weeknight'] },
+      { name: 'Spaghetti & meatballs', mins: 40, tags: ['Kids'] },
+      { name: 'Grilled salmon & rice', mins: 30, tags: ['Grill'] },
+      { name: 'Turkey tacos', mins: 25, tags: ['Weeknight', 'Kids'] },
+      { name: 'Chicken stir-fry', mins: 25, tags: ['Weeknight'] },
+      { name: 'Burgers & sweet potato fries', mins: 40, tags: ['Grill', 'Kids'] },
+      { name: 'Slow cooker pot roast', mins: 480, tags: ['Slow cooker'] },
+      { name: 'Homemade pizza night', mins: 45, tags: ['Kids'] },
+      { name: 'Lemon herb chicken thighs', mins: 35, tags: ['Weeknight'] },
+      { name: 'Steak & roasted veggies', mins: 35, tags: ['Grill'] },
+      { name: 'Chili & cornbread', mins: 60, tags: ['Slow cooker'] },
+      { name: 'Breakfast for dinner', mins: 20, tags: ['Weeknight', 'Kids'] },
+      { name: 'Shrimp fried rice', mins: 25, tags: ['Weeknight'] },
+      { name: 'Pulled pork sandwiches', mins: 480, tags: ['Slow cooker'] }
+    ];
+    this.days = [['Mon', 19], ['Tue', 20], ['Wed', 21], ['Thu', 22], ['Fri', 23], ['Sat', 24], ['Sun', 25]];
+    this.todayIdx = 1;
+    this.state = {
+      week: ['Turkey tacos', 'Sheet-pan chicken fajitas', 'Chicken stir-fry', 'Breakfast for dinner', 'Homemade pizza night', 'Grilled salmon & rice', 'Slow cooker pot roast'],
+      rules: { quick: true, grill: true, slow: true, leftovers: false },
+      toast: ''
+    };
+  }
+  componentWillUnmount() { clearTimeout(this.toastTimer); }
+  eligible(i) {
+    const r = this.state.rules;
+    return this.pool.filter((m) => {
+      if (r.quick && i <= 3 && m.mins > 35) return false;
+      if (r.grill && i === 5 && m.tags.indexOf('Grill') < 0) return false;
+      if (r.slow && i === 6 && m.tags.indexOf('Slow cooker') < 0) return false;
+      return true;
+    });
+  }
+  pick(list, avoid) {
+    const fresh = list.filter((m) => avoid.indexOf(m.name) < 0);
+    const from = fresh.length ? fresh : list;
+    return from[Math.floor(Math.random() * from.length)].name;
+  }
+  swap(i) {
+    const week = this.state.week.slice();
+    week[i] = this.pick(this.eligible(i), week);
+    this.setState({ week });
+  }
+  shuffle() {
+    const week = [];
+    for (let i = 0; i < 7; i++) week.push(this.pick(this.eligible(i), week.concat(this.state.week[i])));
+    this.setState({ week });
+  }
+  fmtMins(m) { return m >= 120 ? Math.round(m / 60) + ' hr' : m + ' min'; }
+  renderVals() {
+    const s = this.state;
+    const byName = {};
+    this.pool.forEach((m) => { byName[m.name] = m; });
+    const week = this.days.map((d, i) => {
+      const leftovers = s.rules.leftovers && i === 2;
+      const m = byName[s.week[i]];
+      const isToday = i === this.todayIdx;
+      return {
+        day: d[0],
+        date: d[1],
+        name: leftovers ? 'Leftovers night' : m.name,
+        meta: leftovers ? 'Clean out the fridge' : this.fmtMins(m.mins) + ' · ' + m.tags.join(' · '),
+        isToday,
+        bg: isToday ? '#2E2619' : '#26241F',
+        border: isToday ? '#E8A33D' : '#2E2B26',
+        dayColor: isToday ? '#E8A33D' : '#A8A196',
+        swap: () => { if (!leftovers) this.swap(i); },
+        swapLabel: 'Swap ' + d[0] + ' meal',
+        swapColor: leftovers ? '#5A564D' : '#F4EFE6'
+      };
+    });
+    const defs = [
+      ['quick', 'Quick weeknights', 'Mon–Thu: 35 min or less'],
+      ['grill', 'Grill Saturday', 'Saturday picks from grill meals'],
+      ['slow', 'Slow cooker Sunday', 'Sunday picks from slow cooker meals'],
+      ['leftovers', 'Leftovers Wednesday', 'Skip cooking midweek']
+    ];
+    const rules = defs.map((d) => {
+      const on = !!s.rules[d[0]];
+      return {
+        label: d[1], sub: d[2], on: on ? 'true' : 'false',
+        track: on ? '#E8A33D' : '#4A463E',
+        align: on ? 'flex-end' : 'flex-start',
+        toggle: () => this.setState({ rules: { ...s.rules, [d[0]]: !on } })
+      };
+    });
+    return {
+      week,
+      rules,
+      poolCount: this.pool.length,
+      shuffle: () => this.shuffle(),
+      toast: s.toast || '7 dinners planned',
+      sendList: () => {
+        this.setState({ toast: 'Grocery list sent to your phone' });
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => this.setState({ toast: '' }), 3000);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
