@@ -13,7 +13,9 @@ export function fitToScreen(): void {
 
   const apply = () => {
     const w = window.innerWidth, h = window.innerHeight;
-    const scale = Math.min(1, w / DESIGN_W, h / DESIGN_H);
+    let scale = Math.min(1, w / DESIGN_W, h / DESIGN_H);
+    // A pixel or two short (e.g. 1280 × 799 on an 11" tablet) isn't worth zooming: 0.999 just blurs the text.
+    if (scale > 0.98) scale = 1;
     // CSS zoom (not transform) so layout, hit areas and fixed overlays all scale together.
     document.documentElement.style.zoom = scale < 1 ? String(Math.floor(scale * 1000) / 1000) : '';
     if (badge) badge.textContent = `${w} × ${h} @ ${window.devicePixelRatio}x · zoom ${scale < 1 ? scale.toFixed(3) : '1 (fits)'}`;

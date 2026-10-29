@@ -107,7 +107,7 @@ On the laptop:
 This lets the doorbell wake the screen, and lets the screen sleep overnight.
 
 1. **Settings → Devices & services → Add integration → Fully Kiosk Browser.** Enter the tablet's IP address and the remote admin password from Part 5 (port 2323, SSL off).
-2. The tablet appears as a device (ours: **TCL Tab 8 Gen2**, entities `switch.tcl_tab_8_gen2_screen`, `button.tcl_tab_8_gen2_bring_to_foreground`, `number.tcl_tab_8_gen2_screen_off_timer`). If yours are named differently, change them in the "Tablet" section near the end of `/config/packages/kitchen_hub.yaml`.
+2. The tablet appears as a device (ours: **D126**, entities `switch.d126_screen`, `button.d126_bring_to_foreground`, `number.d126_screen_off_timer`). If yours are named differently, change them in the "Tablet" section near the end of `/config/packages/kitchen_hub.yaml`.
 3. In Fully: **Motion Detection (Plus) → Turn screen on on motion** on. The integration has no motion sensor, so night mode leans on Fully: at 10 PM Home Assistant sets Fully's screen-off timer to 2 minutes, Fully wakes the screen when someone walks up, and at 6 AM the timer goes back to "never".
 4. **Settings → Tools → YAML → Check configuration**, then **Reload → Automations**. The three **Kitchen Hub (tablet)** automations are on as soon as they load.
 

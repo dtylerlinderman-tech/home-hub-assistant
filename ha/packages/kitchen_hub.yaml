@@ -286,7 +286,7 @@ automation:
         data:
           value: "{{ trigger.event.data.flight_number or trigger.event.data.callsign }}"
 
-  # ---- Tablet: TCL Tab 8 Gen2 in Fully Kiosk (Fully Kiosk Browser integration, set up 2026-10-26) ----
+  # ---- Tablet: 11" tablet (device "D126") in Fully Kiosk (Fully Kiosk Browser integration) ----
   # The integration has no motion sensor, so night mode uses Fully's own screen-off timer: Fully turns the
   # screen off after 2 minutes idle and wakes it on motion (Fully: Motion Detection → Turn screen on on motion).
 
@@ -302,10 +302,10 @@ automation:
     actions:
       - action: switch.turn_on
         target:
-          entity_id: switch.tcl_tab_8_gen2_screen
+          entity_id: switch.d126_screen
       - action: button.press
         target:
-          entity_id: button.tcl_tab_8_gen2_bring_to_foreground
+          entity_id: button.d126_bring_to_foreground
 
   - id: kitchen_hub_tablet_night_mode
     alias: "Kitchen Hub (tablet): screen sleeps 10 PM–6 AM, wakes on motion"
@@ -316,7 +316,7 @@ automation:
     actions:
       - action: number.set_value
         target:
-          entity_id: number.tcl_tab_8_gen2_screen_off_timer
+          entity_id: number.d126_screen_off_timer
         data:
           value: 120
 
@@ -335,11 +335,11 @@ automation:
     actions:
       - action: number.set_value
         target:
-          entity_id: number.tcl_tab_8_gen2_screen_off_timer
+          entity_id: number.d126_screen_off_timer
         data:
           value: 0
       - action: switch.turn_on
         target:
-          entity_id: switch.tcl_tab_8_gen2_screen
+          entity_id: switch.d126_screen
 
   # Kids' task reset (HANDOFF §6) is left out while the to-do lists are parked.
