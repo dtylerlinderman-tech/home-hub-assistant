@@ -31,6 +31,7 @@ const SCREENS: [string, string, string, string?][] = [
   ['08-tasks', '/tasks', "Max's tasks"],
   ['09-tv', '/tv', 'Now playing'],
   ['13-weather', '/weather', 'Next 48 hours'],
+  ['14-groceries', '/groceries', 'Grocery list'],
 ];
 
 for (const [name, hash, label, now] of SCREENS) {
@@ -159,15 +160,15 @@ test('meals: pick a meal, mark eating out, and Suggest keeps both', async ({ pag
   await expect(page.getByText('Nothing planned')).toHaveCount(0);
 });
 
-test('meals: suggest a week, swap a day, send the grocery list', async ({ page }) => {
+test('meals: suggest a week, swap a day, add the ingredients', async ({ page }) => {
   await open(page, '/meals');
   await page.getByLabel('Next week').click();
   await page.getByRole('switch', { name: /Leftovers Wednesday/ }).click();
   await page.getByRole('button', { name: 'Suggest open nights' }).click();
   await expect(page.getByText('Leftovers night')).toBeVisible();
   await page.getByLabel('Swap Mon meal').click();
-  await page.getByRole('button', { name: 'Grocery list' }).click();
-  await expect(page.getByText('Grocery list sent to your phone')).toBeVisible();
+  await page.getByRole('button', { name: 'Add ingredients' }).click();
+  await expect(page.getByText(/Added \d+ ingredients to Groceries/)).toBeVisible();
 });
 
 test('recipes: search, filter and import from a link', async ({ page }) => {
@@ -317,4 +318,29 @@ test('vacuum: Home card appears when stuck and links to the screen', async ({ pa
   await shot(page, '12-home-vacuum-stuck');
   await page.getByLabel(/^Vacuum:/).click();
   await expect(page.getByRole('alert')).toContainText('Stuck near');
+});
+
+test('groceries: add, quick add, check off, send, clear', async ({ page }) => {
+  const errors = await open(page, '/groceries');
+  await page.getByPlaceholder('Add an item').fill('Avocados');
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Avocados' })).toBeVisible();
+  await page.getByRole('group', { name: 'Quick add' }).getByRole('button', { name: 'Bread' }).click();
+  await expect(page.getByLabel('Grocery list').getByRole('button', { name: 'Bread', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Milk' }).click();
+  await expect(page.getByRole('button', { name: 'Milk' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Send to Sam' }).click();
+  await expect(page.getByText(/Emailed \d+ items to Sam/)).toBeVisible();
+  await page.getByRole('button', { name: 'Clear checked' }).click();
+  await expect(page.getByLabel('Grocery list').getByRole('button', { name: 'Milk' })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('meals: add ingredients fills the grocery list once', async ({ page }) => {
+  const errors = await open(page, '/meals');
+  await page.getByRole('button', { name: 'Add ingredients' }).click();
+  await expect(page.getByText(/Added \d+ ingredients to Groceries/)).toBeVisible();
+  await page.getByRole('button', { name: 'Add ingredients' }).click();
+  await expect(page.getByText('Everything’s already on the grocery list')).toBeVisible();
+  expect(errors).toEqual([]);
 });

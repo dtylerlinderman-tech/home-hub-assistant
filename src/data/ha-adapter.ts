@@ -10,12 +10,13 @@ import {
 } from 'home-assistant-js-websocket';
 import { createStore } from '../store';
 import {
-  lastCleanedByRoom, roombaMapSvg, toLockState, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
-  type HaForecast, type RoombaMissionRecord, type RoombaRoom,
+  lastCleanedByRoom, roombaMapSvg, toLockState, toTodoItems, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
+  type HaForecast, type HaTodoItem, type RoombaMissionRecord, type RoombaRoom,
   type MealieMealplan, type MealieRecipe, type MealieRecipeSummary,
 } from './ha-mappers';
 import { addDays, isoDate } from '../logic/time';
 import { usualFromHistory } from '../logic/schoolRun';
+import { itemsToAdd } from '../logic/groceries';
 import { openWebRtcStream } from './webrtc';
 import type { HubConfig } from '../config';
 import type { PlanDay, Rules } from '../logic/mealRules';
@@ -49,6 +50,7 @@ const PKG = {
   relockTimer: 'timer.kitchen_door_relock',
   lockoutTimer: 'timer.kitchen_door_lockout',
   mealRule: (k: string) => 'input_boolean.kitchen_meal_rule_' + k,
+  sendGroceries: 'script.kitchen_hub_send_groceries',
 };
 
 /** Integration behind config.door.lock (krozgrov/ha-nest-yale-integration). */
@@ -76,6 +78,7 @@ export class HaAdapter implements DataAdapter {
   private entities: HassEntities = {};
   private forecastToday: ForecastDay | null = null;
   private unsubForecast: (() => void) | null = null;
+  private unsubGroceries: (() => void) | undefined;
   /** Resolves once the first full entity list has arrived, so reads made at page load see real entities. */
   private ready: Promise<void>;
   private markReady: () => void = () => {};
@@ -96,6 +99,7 @@ export class HaAdapter implements DataAdapter {
         name: t.name, available: false, on: false, app: null, title: null, channel: null, artwork: null, paused: false, live: false, volume: null, muted: false,
       })),
       reminders: null,
+      groceries: null,
       kids: cfg.kids.map((k) => ({ name: k.name, color: k.color, items: null })),
       schoolRun: null,
       // Phase 3 moves these into input_boolean helpers so they sync between devices.
@@ -133,7 +137,7 @@ export class HaAdapter implements DataAdapter {
       if (err === ERR_INVALID_AUTH) { saveTokens(null); location.reload(); }
     });
 
-    subscribeEntities(conn, (ents) => { this.entities = ents; this.refresh(); this.markReady(); });
+    subscribeEntities(conn, (ents) => { this.entities = ents; this.refresh(); this.subscribeGroceries(); this.markReady(); });
     this.subscribeForecast();
     void this.loadTravelHistory();
     setInterval(() => void this.loadTravelHistory(), 3600e3);
@@ -590,22 +594,64 @@ export class HaAdapter implements DataAdapter {
     }
   }
 
-  /** Add the week's ingredients to the Mealie shopping list (a todo entity) and ping the phone. */
-  async sendGroceryList(recipeIds: string[]): Promise<void> {
+  // ---- Groceries: the Mealie shopping list, as HA's todo entity ----
+
+  private groceryList(): string | null {
     const list = this.cfg.mealie?.shoppingList;
-    if (!this.conn || !list || !this.entity(list)) return notYet();
-    const lines = new Set<string>();
+    return list && this.entity(list) ? list : null;
+  }
+
+  /** Live items via todo/item/subscribe. Re-subscribed on reconnect by the websocket library. */
+  private subscribeGroceries(): void {
+    const list = this.cfg.mealie?.shoppingList;
+    if (!this.conn || !list || !this.entity(list) || this.unsubGroceries) return;
+    this.unsubGroceries = () => {}; // claimed; replaced once the subscription is up
+    this.conn
+      .subscribeMessage<{ items: HaTodoItem[] }>(
+        (msg) => this.set({ groceries: toTodoItems(msg.items) }),
+        { type: 'todo/item/subscribe', entity_id: list },
+      )
+      .then((unsub) => { this.unsubGroceries = unsub; })
+      .catch((e) => { this.unsubGroceries = undefined; console.warn('Grocery list subscription failed', e); });
+  }
+
+  /** Add the week's ingredients, skipping anything already on the list. */
+  async addIngredients(recipeIds: string[]): Promise<number> {
+    const list = this.groceryList();
+    if (!this.conn || !list) return notYet();
+    const lines: string[] = [];
     for (const id of new Set(recipeIds)) {
       const r = await this.getRecipe(id);
-      r?.ingredients.forEach((i) => lines.add((i.qty ? i.qty + ' ' : '') + i.name));
+      r?.ingredients.forEach((i) => lines.push((i.qty ? i.qty + ' ' : '') + i.name));
     }
-    for (const item of lines) await this.call('todo', 'add_item', { item }, list);
-    const notify = this.cfg.notifyTarget;
-    if (notify?.startsWith('notify.')) {
-      await callService(this.conn, 'notify', notify.slice('notify.'.length), {
-        title: 'Grocery list ready', message: lines.size + ' items added for this week’s dinners.',
-      });
-    }
+    const add = itemsToAdd(this.state.get().groceries ?? [], lines);
+    for (const item of add) await this.call('todo', 'add_item', { item }, list);
+    return add.length;
+  }
+
+  async addGrocery(text: string): Promise<void> {
+    const list = this.groceryList();
+    if (!list) return notYet();
+    if (!itemsToAdd(this.state.get().groceries ?? [], [text]).length) return;
+    return this.call('todo', 'add_item', { item: text.trim() }, list);
+  }
+
+  async setGroceryDone(uid: string, done: boolean): Promise<void> {
+    const list = this.groceryList();
+    if (!list) return notYet();
+    return this.call('todo', 'update_item', { item: uid, status: done ? 'completed' : 'needs_action' }, list);
+  }
+
+  async clearCheckedGroceries(): Promise<void> {
+    const list = this.groceryList();
+    if (!list) return notYet();
+    return this.call('todo', 'remove_completed_items', {}, list);
+  }
+
+  async sendGroceries(): Promise<void> {
+    if (!this.conn) return notYet();
+    if (!this.entity(PKG.sendGroceries)) throw new Error('The send-list script isn’t installed');
+    await callService(this.conn, 'script', PKG.sendGroceries.replace(/^script\./, ''), {});
   }
 
   // ---- Not built yet (Phase 3–4). Reads report "not connected"; actions fail with a toast. ----

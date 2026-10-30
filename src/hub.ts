@@ -43,10 +43,11 @@ export async function act<T>(p: Promise<T>, failMsg = 'That didn’t work. Try a
  * Features that hide entirely (rather than showing "Not connected") until they're configured.
  * Mock mode shows everything.
  */
-export function enabled(feature: 'tasks' | 'reminders'): boolean {
+export function enabled(feature: 'tasks' | 'reminders' | 'groceries'): boolean {
   if (adapter.isMock) return true;
   switch (feature) {
     case 'tasks': return config.kids.some((k) => !!k.todo);
     case 'reminders': return !!config.homeReminders;
+    case 'groceries': return !!config.mealie?.shoppingList;
   }
 }

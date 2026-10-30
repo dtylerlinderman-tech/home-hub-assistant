@@ -1,0 +1,38 @@
+.groceries { padding: 28px 36px; gap: 18px; }
+.groceries-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.groceries-title { display: flex; flex-direction: column; gap: 2px; }
+.groceries-actions { display: flex; gap: 12px; }
+.groceries-btn { height: 56px; padding: 0 22px; border-radius: 18px; background: var(--raised); font-size: 17px; font-weight: 700; gap: 10px; }
+.groceries-btn.primary { background: var(--accent); color: var(--on-accent); font-weight: 800; }
+.groceries-btn:disabled { opacity: 0.5; }
+
+.groceries-add {
+  margin: 0; height: 64px; padding: 0 10px 0 20px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border-strong);
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+}
+.groceries-add:focus-within { border-color: var(--accent); }
+.groceries-add-field { flex: 1; display: flex; }
+.groceries-add-field input {
+  flex: 1; min-width: 0; height: 48px; background: transparent; border: none; outline: none; color: var(--text);
+  font-family: inherit; font-size: 20px; font-weight: 600;
+}
+.groceries-add-field input::placeholder { color: var(--muted); font-weight: 500; }
+.groceries-add-go { height: 46px; padding: 0 24px; border-radius: 14px; background: var(--accent); color: var(--on-accent); font-size: 17px; font-weight: 800; }
+.groceries-add-go:disabled { background: var(--raised); color: var(--muted); }
+
+.groceries-staples { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+.groceries-staple { height: 44px; padding: 0 16px 0 12px; border-radius: 22px; background: var(--surface); color: var(--text); font-size: 16px; font-weight: 700; gap: 6px; }
+
+.groceries-card { flex: 1; min-height: 0; border-radius: 28px; padding: 18px; display: flex; flex-direction: column; }
+.groceries-scroll { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
+.groceries-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.groceries-cart-label { padding: 10px 6px 0; }
+.groceries-item { justify-content: flex-start; min-height: 60px; padding: 0 18px; border-radius: 16px; gap: 16px; background: var(--raised); text-align: left; }
+.groceries-item.done { background: rgba(255, 250, 255, 0.03); }
+.groceries-label { font-size: 20px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+.groceries-item.done .groceries-label { color: var(--subtle); text-decoration: line-through; }
+
+@media (max-height: 799px) {
+  .groceries { padding: 22px 30px; gap: 14px; }
+  .groceries-item { min-height: 54px; }
+}

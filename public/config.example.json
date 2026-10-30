@@ -112,7 +112,9 @@
       "Kids",
       "Grill",
       "Slow cooker"
-    ]
+    ],
+    "shoppingList": "todo.mealie_groceries",
+    "sendListTo": "Sam"
   },
   "notifyTarget": "notify.mobile_app_alexs_phone"
 }

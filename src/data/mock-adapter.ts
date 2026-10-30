@@ -4,12 +4,13 @@ import { createStore } from '../store';
 import type { HubConfig } from '../config';
 import type { PlanDay, Rules } from '../logic/mealRules';
 import { addDays, isoDate, nowMs, startOfDay, startOfWeek, now } from '../logic/time';
+import { itemsToAdd } from '../logic/groceries';
 import type {
   CalendarEvent, DataAdapter, FanMode, Flight, ForecastPoint, Game, GameSide, HubState, HvacMode, MealPlanDay, Recipe, RecipeSummary,
   Thermostat, TvCommand, TvState, UnlockResult, VacuumMission,
 } from './adapter';
 import {
-  MOCK_EVENTS, MOCK_KID_TASKS, MOCK_LAST_WEEK, MOCK_RECIPES, MOCK_REMINDERS, MOCK_WEEK, placeholderRecipe, slug,
+  MOCK_EVENTS, MOCK_KID_TASKS, MOCK_LAST_WEEK, MOCK_RECIPES, MOCK_GROCERIES, MOCK_REMINDERS, MOCK_WEEK, placeholderRecipe, slug,
 } from './mock-data';
 import { MockRobot } from './mock-vacuum';
 
@@ -95,6 +96,7 @@ export class MockAdapter implements DataAdapter {
       doorbell: { lastRing: null, lastMotion: todayAt(16, 12), snapshotUrl: null, streamAvailable: false },
       tvs: cfg.tvs.map((t, i) => tv(t.name, i === 0, ch[this.channel[i] ?? 0] ?? '', i === 0 ? 35 : 20)),
       reminders: MOCK_REMINDERS.map((r) => ({ ...r, done: false })),
+      groceries: MOCK_GROCERIES.map((summary, i) => ({ uid: 'g' + i, summary, done: i >= MOCK_GROCERIES.length - 2, due: null })),
       kids: cfg.kids.map((k) => ({
         name: k.name,
         color: k.color,
@@ -134,7 +136,7 @@ export class MockAdapter implements DataAdapter {
     this.offline = off;
     this.state.set(off
       ? {
-        ...this.online, weather: null, lock: null, doorbell: null, reminders: null, schoolRun: null,
+        ...this.online, weather: null, lock: null, doorbell: null, reminders: null, groceries: null, schoolRun: null,
         climate: this.online.climate.map((c) => ({ ...c, available: false })),
         tvs: this.online.tvs.map((t) => ({ ...t, available: false })),
         kids: this.online.kids.map((k) => ({ ...k, items: null })),
@@ -193,9 +195,45 @@ export class MockAdapter implements DataAdapter {
     this.patch({ mealRules: { ...this.online.mealRules, [key]: on } });
   }
 
-  async sendGroceryList(recipeIds: string[]): Promise<void> {
+  async addIngredients(recipeIds: string[]): Promise<number> {
     await wait(300);
-    console.info('[mock] grocery list for', recipeIds);
+    const lines: string[] = [];
+    for (const id of new Set(recipeIds)) {
+      const r = await this.getRecipe(id);
+      r?.ingredients.forEach((i) => lines.push((i.qty ? i.qty + ' ' : '') + i.name));
+    }
+    const add = itemsToAdd(this.online.groceries ?? [], lines);
+    add.forEach((summary) => this.pushGrocery(summary));
+    return add.length;
+  }
+
+  // ---- Groceries ----
+
+  private groceryUid = 0;
+
+  private pushGrocery(summary: string): void {
+    const list = this.online.groceries ?? [];
+    const open = list.filter((i) => !i.done);
+    this.patch({ groceries: [...open, { uid: 'n' + this.groceryUid++, summary, done: false, due: null }, ...list.filter((i) => i.done)] });
+  }
+
+  async addGrocery(text: string): Promise<void> {
+    const [summary] = itemsToAdd(this.online.groceries ?? [], [text]);
+    if (summary) this.pushGrocery(summary);
+  }
+
+  async setGroceryDone(uid: string, done: boolean): Promise<void> {
+    const list = (this.online.groceries ?? []).map((i) => (i.uid === uid ? { ...i, done } : i));
+    this.patch({ groceries: [...list.filter((i) => !i.done), ...list.filter((i) => i.done)] });
+  }
+
+  async clearCheckedGroceries(): Promise<void> {
+    this.patch({ groceries: (this.online.groceries ?? []).filter((i) => !i.done) });
+  }
+
+  async sendGroceries(): Promise<void> {
+    await wait(400);
+    console.info('[mock] emailed', (this.online.groceries ?? []).filter((i) => !i.done).length, 'items');
   }
 
   // ---- Weather ----

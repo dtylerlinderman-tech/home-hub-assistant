@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { act, adapter, config, showToast } from '../hub';
 import { useStore } from '../store';
 import { useAsync } from '../useAsync';
@@ -22,6 +22,7 @@ export function Meals() {
   const rules = useStore(adapter.state).mealRules;
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState('');
+  const noteTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const [data, reload] = useAsync(async () => {
     const [plan, last, recipes] = await Promise.all([
@@ -48,7 +49,7 @@ export function Meals() {
   const planned = days.filter((d) => planByDate.has(d)).length;
   const [picking, setPicking] = useState<number | null>(null);
 
-  const flash = (text: string) => { setNote(text); setTimeout(() => setNote(''), 3000); };
+  const flash = (text: string) => { setNote(text); clearTimeout(noteTimer.current); noteTimer.current = setTimeout(() => setNote(''), 3000); };
 
   async function save(changes: { date: string; recipeId: PlanDay; note?: string }[]) {
     setBusy(true);
@@ -80,10 +81,11 @@ export function Meals() {
     void save([{ date: days[i], recipeId, note: noteTitle }]);
   };
 
-  async function sendList() {
+  async function addIngredients() {
     const ids = current.filter((x): x is string => !!x);
-    const ok = await act(adapter.sendGroceryList(ids).then(() => true), 'Couldn’t send the grocery list.');
-    if (ok) flash('Grocery list sent to your phone');
+    const added = await act(adapter.addIngredients(ids), 'Couldn’t add the ingredients.');
+    if (added === undefined) return;
+    flash(added ? `Added ${added} ingredient${added === 1 ? '' : 's'} to Groceries` : 'Everything’s already on the grocery list');
   }
 
   const connected = data.value?.plan !== null && recipes !== null;
@@ -102,7 +104,7 @@ export function Meals() {
           {offset !== 0 && <button type="button" class="btn meals-today" onClick={() => setOffset(0)}>This week</button>}
         </div>
         <div class="meals-actions">
-          <button type="button" class="btn meals-btn" onClick={sendList} disabled={!connected || busy}><Icon name="cart" size={22} />Grocery list</button>
+          <button type="button" class="btn meals-btn" onClick={addIngredients} disabled={!connected || busy || !planned}><Icon name="cart" size={22} />Add ingredients</button>
           <button type="button" class="btn meals-btn primary" onClick={shuffle} disabled={!connected || busy || !pool.length}><Icon name="shuffle" size={22} stroke={2.2} />Suggest open nights</button>
         </div>
       </header>

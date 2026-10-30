@@ -97,6 +97,9 @@ export const MOCK_REMINDERS = [
   { uid: 'hvac', summary: 'Change HVAC filter', due: 'Saturday' },
 ];
 
+/** The grocery list; the last two start checked off. */
+export const MOCK_GROCERIES = ['2 lb chicken thighs', 'Bell peppers', 'Flour tortillas', 'Shredded cheese', 'Milk', 'Bananas', 'Sourdough bread', 'Greek yogurt', 'Eggs', 'Coffee'];
+
 export const MOCK_KID_TASKS: Record<string, { section: 'morning' | 'after_school' | 'evening'; tasks: string[]; done: number[] }[]> = {
   Max: [
     { section: 'morning', tasks: ['Make your bed', 'Brush teeth', 'Get dressed'], done: [0, 1] },

@@ -11,6 +11,7 @@ import { Home } from './screens/Home';
 import { Door } from './screens/Door';
 import { Cook } from './screens/Cook';
 import { Meals } from './screens/Meals';
+import { Groceries } from './screens/Groceries';
 import { Recipes } from './screens/Recipes';
 import { Calendar } from './screens/Calendar';
 import { Climate } from './screens/Climate';
@@ -48,7 +49,7 @@ export function App() {
     case 'door': body = <ErrorBoundary resetKey={route.path}><Door route={route} /></ErrorBoundary>; break;
     case 'cook': body = <ErrorBoundary resetKey={route.path}><Cook route={route} /></ErrorBoundary>; break;
     default: {
-      const Screen = { home: Home, calendar: Calendar, meals: Meals, recipes: Recipes, tasks: Tasks, climate: Climate, weather: Weather, tv: TV, vacuum: Vacuum }[route.name];
+      const Screen = { home: Home, calendar: Calendar, meals: Meals, groceries: Groceries, recipes: Recipes, tasks: Tasks, climate: Climate, weather: Weather, tv: TV, vacuum: Vacuum }[route.name];
       body = (
         <>
           <Rail active={route.name} />

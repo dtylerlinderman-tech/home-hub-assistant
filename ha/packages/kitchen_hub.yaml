@@ -148,6 +148,39 @@ script:
       - stop: Wrong PIN
         response_variable: result
 
+  # "Send to …" on the Groceries screen: emails the open items on the Mealie grocery list.
+  # The email goes through HA's SMTP integration (Settings → Devices & services → SMTP), which holds
+  # the Gmail app password and the recipient. Change the two entity IDs below if yours differ.
+  kitchen_hub_send_groceries:
+    alias: "Kitchen Hub: email the grocery list"
+    icon: mdi:email-fast-outline
+    mode: single
+    variables:
+      list_entity: todo.mealie_groceries
+      email_entity: notify.groceries_email
+    sequence:
+      - action: todo.get_items
+        target:
+          entity_id: "{{ list_entity }}"
+        data:
+          status: needs_action
+        response_variable: list
+      - variables:
+          items: "{{ list[list_entity]['items'] | map(attribute='summary') | list }}"
+      - condition: template
+        value_template: "{{ items | count > 0 }}"
+      - action: notify.send_message
+        target:
+          entity_id: "{{ email_entity }}"
+        data:
+          title: "Grocery list · {{ now().strftime('%a %b %-d') }}"
+          message: |-
+            {{ items | count }} items:
+
+            {% for i in items %}☐ {{ i }}
+            {% endfor %}
+            Sent from the kitchen hub.
+
 automation:
   - id: kitchen_hub_relock_front_door
     alias: "Kitchen Hub: relock the front door"

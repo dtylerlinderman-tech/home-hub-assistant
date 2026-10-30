@@ -163,6 +163,8 @@ export interface HubState {
   doorbell: Doorbell | null;
   tvs: TvState[];
   reminders: TodoItem[] | null;
+  /** The Mealie shopping list (a todo entity); null = not connected. */
+  groceries: TodoItem[] | null;
   kids: KidTasks[];
   /** Drive time per window; "usual" is computed per window from history. */
   schoolRun: { dropoff: SchoolRunLive; pickup: SchoolRunLive } | null;
@@ -274,7 +276,15 @@ export interface DataAdapter {
   /** recipeId null writes a note night: `note` as its title (default "Leftovers night"). */
   setMealPlan(days: { date: string; recipeId: PlanDay; note?: string }[]): Promise<void>;
   setMealRule(key: keyof Rules, on: boolean): Promise<void>;
-  sendGroceryList(recipeIds: string[]): Promise<void>;
+  /** Add these recipes' ingredients to the grocery list, skipping what's already on it. Returns how many were added. */
+  addIngredients(recipeIds: string[]): Promise<number>;
+
+  // Groceries (the Mealie shopping list)
+  addGrocery(text: string): Promise<void>;
+  setGroceryDone(uid: string, done: boolean): Promise<void>;
+  clearCheckedGroceries(): Promise<void>;
+  /** Email the open items through the HA package's script. */
+  sendGroceries(): Promise<void>;
 
   // Recipes
   getRecipes(): Promise<RecipeSummary[] | null>;

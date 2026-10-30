@@ -2,7 +2,7 @@
 // (/local/kitchen/index.html) with no server rewrites.
 import { useEffect, useState } from 'preact/hooks';
 
-export type RouteName = 'home' | 'calendar' | 'meals' | 'recipes' | 'tasks' | 'climate' | 'weather' | 'tv' | 'vacuum' | 'door' | 'cook';
+export type RouteName = 'home' | 'calendar' | 'meals' | 'groceries' | 'recipes' | 'tasks' | 'climate' | 'weather' | 'tv' | 'vacuum' | 'door' | 'cook';
 
 export interface Route {
   name: RouteName;
@@ -11,7 +11,7 @@ export interface Route {
   path: string;
 }
 
-const NAMES: RouteName[] = ['home', 'calendar', 'meals', 'recipes', 'tasks', 'climate', 'weather', 'tv', 'vacuum', 'door', 'cook'];
+const NAMES: RouteName[] = ['home', 'calendar', 'meals', 'groceries', 'recipes', 'tasks', 'climate', 'weather', 'tv', 'vacuum', 'door', 'cook'];
 
 export function parseHash(hash = location.hash): Route {
   const raw = hash.replace(/^#\/?/, '');

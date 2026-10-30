@@ -55,8 +55,12 @@ export interface HubConfig {
   flights?: string;
   /** Team Tracker sensors (sensor.*) for the game-day card on Home. */
   sports?: string[];
-  /** Mealie via HA's integration. url = Mealie's own address, used only to load recipe photos. */
-  mealie?: { configEntryId?: string; mealTags: string[]; url?: string; shoppingList?: string };
+  /**
+   * Mealie via HA's integration. url = Mealie's own address, used only to load recipe photos.
+   * shoppingList = the grocery list's todo entity; sendListTo = who the "Send" button emails (the package's
+   * script and HA's SMTP integration do the sending).
+   */
+  mealie?: { configEntryId?: string; mealTags: string[]; url?: string; shoppingList?: string; sendListTo?: string };
   notifyTarget?: string;
 }
 
@@ -83,7 +87,7 @@ export const DEFAULT_CONFIG: HubConfig = {
   tvService: 'YouTube TV',
   favoriteChannels: ['ESPN', 'SEC Network', 'NBC', 'CBS', 'ABC', 'FOX', 'Disney Junior', 'HGTV'].map((name) => ({ name })),
   kids: [{ name: 'Max', color: '#6EA8E8' }, { name: 'Lily', color: '#B79CF0' }],
-  mealie: { mealTags: ['Weeknight', 'Kids', 'Grill', 'Slow cooker'] },
+  mealie: { mealTags: ['Weeknight', 'Kids', 'Grill', 'Slow cooker'], shoppingList: 'todo.mealie_groceries', sendListTo: 'Sam' },
   vacuum: { name: 'Roomba', entity: 'vacuum.roomba' },
   sports: ['sensor.falcons', 'sensor.gt_football', 'sensor.gt_basketball'],
 };

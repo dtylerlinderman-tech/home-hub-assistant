@@ -3,7 +3,7 @@
 import type { HassEntity } from 'home-assistant-js-websocket';
 import type {
   FanMode, Flight, ForecastPoint, Game, GameSide, HvacAction, HvacMode, Ingredient, LockState, MealPlanDay, MissionResult, Recipe, RecipeStep, RecipeSummary,
-  Thermostat, TvState, Vacuum, VacuumMission, VacuumStatus,
+  Thermostat, TodoItem, TvState, Vacuum, VacuumMission, VacuumStatus,
 } from './adapter';
 import { parseDuration } from '../logic/timers';
 
@@ -479,4 +479,14 @@ export function roombaMapSvg(rooms: Record<string, RoombaRoom> | undefined, high
     : '';
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W.toFixed(0) + ' ' + H.toFixed(0) + '">' + shapes + labels + dot + '</svg>';
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+// ---- To-do lists (todo/item/subscribe) ----
+
+export interface HaTodoItem { uid: string; summary: string; status: 'needs_action' | 'completed'; due?: string | null }
+
+/** Open items first, in list order, then checked ones. */
+export function toTodoItems(raw: HaTodoItem[] | null | undefined): TodoItem[] {
+  const items = (raw ?? []).filter((i) => i.uid && i.summary?.trim()).map((i) => ({ uid: i.uid, summary: i.summary.trim(), done: i.status === 'completed', due: null }));
+  return [...items.filter((i) => !i.done), ...items.filter((i) => i.done)];
 }
