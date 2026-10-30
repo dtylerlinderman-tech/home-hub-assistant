@@ -39,7 +39,7 @@ The small **Mock** button in the bottom-right corner opens test controls:
 | `?now=2026-10-20T08:32` | Start the clock at this time (it keeps ticking) |
 | `?nodev=1` | Hide the Mock button |
 
-Screens are hash routes: `#/`, `#/calendar`, `#/meals`, `#/groceries`, `#/recipes`, `#/tasks`, `#/climate`, `#/tv`, `#/vacuum`, `#/door`, `#/cook/<recipe-id>?step=4`.
+Screens are hash routes: `#/`, `#/calendar`, `#/meals`, `#/groceries`, `#/recipes`, `#/tasks`, `#/climate`, `#/games`, `#/tv`, `#/vacuum`, `#/door`, `#/cook/<recipe-id>?step=4`.
 
 ## Checks
 

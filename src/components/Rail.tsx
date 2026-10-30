@@ -13,6 +13,7 @@ const ITEMS: { route: RouteName; label: string; icon: IconName; path: string }[]
   { route: 'tasks', label: 'Tasks', icon: 'tasks', path: '/tasks' },
   { route: 'climate', label: 'Climate', icon: 'climate', path: '/climate' },
   { route: 'weather', label: 'Weather', icon: 'partly', path: '/weather' },
+  { route: 'games', label: 'Games', icon: 'trophy', path: '/games' },
   { route: 'tv', label: 'TV', icon: 'tv', path: '/tv' },
   { route: 'vacuum', label: 'Vacuum', icon: 'vacuum', path: '/vacuum' },
 ];
@@ -23,7 +24,7 @@ export function Rail({ active }: { active: RouteName }) {
   const doorColor = !lock || lock.state === 'unavailable' ? 'var(--faint)' : unlocked ? 'var(--alert)' : 'var(--ok)';
   return (
     <nav class="rail" aria-label="Main">
-      {ITEMS.filter((it) => (it.route !== 'tasks' || enabled('tasks')) && (it.route !== 'groceries' || enabled('groceries')) && (it.route !== 'vacuum' || !!config.vacuum)).map((it) => (
+      {ITEMS.filter((it) => (it.route !== 'tasks' || enabled('tasks')) && (it.route !== 'groceries' || enabled('groceries')) && (it.route !== 'games' || !!config.sports?.length) && (it.route !== 'vacuum' || !!config.vacuum)).map((it) => (
         <a key={it.route} href={href(it.path)} class={'rail-item' + (active === it.route ? ' on' : '')} aria-current={active === it.route ? 'page' : undefined}>
           <Icon name={it.icon} size={26} />
           <span>{it.label}</span>

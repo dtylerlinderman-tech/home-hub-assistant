@@ -6,7 +6,7 @@ import type { PlanDay, Rules } from '../logic/mealRules';
 import { addDays, isoDate, nowMs, startOfDay, startOfWeek, now } from '../logic/time';
 import { itemsToAdd } from '../logic/groceries';
 import type {
-  CalendarEvent, DataAdapter, FanMode, Flight, ForecastPoint, Game, GameSide, HubState, HvacMode, MealPlanDay, Recipe, RecipeSummary,
+  CalendarEvent, DataAdapter, FanMode, Flight, ForecastPoint, Game, GameSide, HubState, HvacMode, MealPlanDay, Recipe, RecipeSummary, TeamSchedule,
   Thermostat, TvCommand, TvState, UnlockResult, VacuumMission,
 } from './adapter';
 import {
@@ -235,6 +235,27 @@ export class MockAdapter implements DataAdapter {
   async sendGroceries(): Promise<void> {
     await wait(400);
     console.info('[mock] emailed', (this.online.groceries ?? []).filter((i) => !i.done).length, 'items');
+  }
+
+  // ---- Team schedules ----
+
+  async getTeamSchedule(sensor: string): Promise<TeamSchedule | null> {
+    await wait(150);
+    if (this.offline) return null;
+    const game = this.online.games.find((g) => g.id === sensor);
+    if (!game) return null;
+    const day = 864e5, t = nowMs();
+    const opp = (name: string, abbr: string) => ({ name, abbr, logo: null });
+    const past: [string, string, boolean, number, number][] = sensor.includes('basketball') ? []
+      : sensor.includes('football') && !sensor.includes('falcons') ? [['Duke', 'DUKE', false, 27, 20], ['Clemson', 'CLEM', true, 17, 24], ['Virginia', 'UVA', true, 31, 28]]
+      : [['49ers', 'SF', true, 29, 20], ['Bears', 'CHI', true, 23, 31], ['Ravens', 'BAL', false, 23, 30]];
+    return {
+      name: game.team.name, logo: null, record: game.team.record,
+      results: past.map(([name, abbr, home, us, them], i) => ({
+        start: t - (i + 1) * 7 * day, opponent: opp(name, abbr), home, us, them, outcome: us > them ? 'W' : us < them ? 'L' : 'T',
+      })),
+      next: game.state === 'pre' ? { start: game.start, opponent: opp(game.opponent.name, game.opponent.abbr), home: game.home, tv: game.tv } : null,
+    };
   }
 
   // ---- Weather ----

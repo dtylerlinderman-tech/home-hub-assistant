@@ -20,5 +20,7 @@ The app in mock mode at 1280×800, saved at 2× (2560×1600). `npm run test:e2e`
 | 11-vacuum-cleaning.png | Vacuum, cleaning |
 | 12-home-vacuum-stuck.png | Home with a stuck vacuum |
 | 13-weather.png | Weather |
+| 14-groceries.png | Groceries |
+| 15-games.png | Games: live score, next game, recent results |
 
 All names, meals, events, tasks and channels shown are sample data.

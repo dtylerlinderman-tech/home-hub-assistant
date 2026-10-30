@@ -222,15 +222,19 @@ test('weather: hourly tap shows details, rain shows tomorrow, Home links here', 
   await expect(page.locator('.wx-hourly-detail')).toContainText('3 PM');
 });
 
-test('games: live game first with its score, next game with kickoff and channel', async ({ page }) => {
-  await open(page, '/');
-  const rows = page.locator('.home-game');
-  await expect(rows).toHaveCount(2);
-  await expect(rows.nth(0)).toContainText('Falcons vs 49ers');
-  await expect(rows.nth(0)).toContainText('4:12 - 3rd');
-  await expect(rows.nth(0).locator('.home-game-score')).toHaveText('17–14');
-  await expect(rows.nth(1)).toContainText('Georgia Tech at Pitt');
-  await expect(rows.nth(1)).toContainText('ESPN2');
+test('games: not on Home; the Games screen shows live score, next game and recent results', async ({ page }) => {
+  const errors = await open(page, '/');
+  await expect(page.locator('.home-game')).toHaveCount(0);
+  await page.getByRole('link', { name: 'Games' }).click();
+  const falcons = page.getByLabel('Falcons', { exact: true });
+  await expect(falcons.getByLabel(/^Live: Falcons 17, 49ers 14/)).toBeVisible();
+  await expect(falcons.getByLabel(/^Win 29–20 vs 49ers/)).toBeVisible();
+  const gt = page.getByLabel('Georgia Tech').first();
+  await expect(gt).toContainText('at Pitt');
+  await expect(gt).toContainText('ESPN2');
+  await expect(page.getByText('No games yet this season')).toBeVisible(); // basketball
+  await shot(page, '15-games');
+  expect(errors).toEqual([]);
 });
 
 test('lock: expired Google sign-in says so on Home and the Door screen', async ({ page }) => {

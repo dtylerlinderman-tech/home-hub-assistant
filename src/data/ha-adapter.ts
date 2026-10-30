@@ -10,9 +10,9 @@ import {
 } from 'home-assistant-js-websocket';
 import { createStore } from '../store';
 import {
-  lastCleanedByRoom, roombaMapSvg, toLockState, toPackages, toTodoItems, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
+  lastCleanedByRoom, roombaMapSvg, toLockState, toPackages, toTeamSchedule, toTodoItems, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
   type HaForecast, type HaTodoItem, type RoombaMissionRecord, type RoombaRoom,
-  type MealieMealplan, type MealieRecipe, type MealieRecipeSummary,
+  type EspnSchedule, type MealieMealplan, type MealieRecipe, type MealieRecipeSummary,
 } from './ha-mappers';
 import { addDays, isoDate } from '../logic/time';
 import { usualFromHistory } from '../logic/schoolRun';
@@ -21,7 +21,7 @@ import { openWebRtcStream } from './webrtc';
 import type { HubConfig } from '../config';
 import type { PlanDay, Rules } from '../logic/mealRules';
 import type {
-  CalendarEvent, DataAdapter, FanMode, ForecastPoint, HubState, HvacMode, MealPlanDay, Recipe, RecipeSummary,
+  CalendarEvent, DataAdapter, FanMode, ForecastPoint, HubState, HvacMode, MealPlanDay, Recipe, RecipeSummary, TeamSchedule,
   TvCommand, UnlockResult, VacuumMission, Weather,
 } from './adapter';
 
@@ -289,6 +289,24 @@ export class HaAdapter implements DataAdapter {
   private call(domain: string, service: string, data: object, entityId: string | string[]): Promise<void> {
     if (!this.conn) return notYet();
     return callService(this.conn, domain, service, data, { entity_id: entityId }).then(() => undefined);
+  }
+
+  // ---- Team schedules: straight from ESPN (where Team Tracker gets its data), cached 15 minutes ----
+
+  private schedules = new Map<string, { at: number; value: TeamSchedule }>();
+
+  async getTeamSchedule(sensor: string): Promise<TeamSchedule | null> {
+    await this.whenReady();
+    const a = this.entity(sensor)?.attributes;
+    const sport = a?.sport_path, league = a?.league_path, team = a?.team_id;
+    if (typeof sport !== 'string' || typeof league !== 'string' || team == null) return null;
+    const hit = this.schedules.get(sensor);
+    if (hit && Date.now() - hit.at < 15 * 60e3) return hit.value;
+    const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`);
+    if (!res.ok) return hit?.value ?? null;
+    const value = toTeamSchedule((await res.json()) as EspnSchedule, String(team), Date.now());
+    this.schedules.set(sensor, { at: Date.now(), value });
+    return value;
   }
 
   // ---- Weather ----

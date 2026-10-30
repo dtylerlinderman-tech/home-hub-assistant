@@ -3,7 +3,7 @@
 import type { HassEntity } from 'home-assistant-js-websocket';
 import type {
   FanMode, Flight, ForecastPoint, Game, GameSide, HvacAction, HvacMode, Ingredient, LockState, MealPlanDay, MissionResult, Recipe, RecipeStep, RecipeSummary,
-  Packages, Thermostat, TodoItem, TvState, Vacuum, VacuumMission, VacuumStatus,
+  Opponent, Packages, TeamResult, TeamSchedule, Thermostat, TodoItem, TvState, Vacuum, VacuumMission, VacuumStatus,
 } from './adapter';
 import { parseDuration } from '../logic/timers';
 
@@ -526,4 +526,53 @@ export function toPackages(get: (id: string) => HassEntity | null, prefixes: str
   if (!found) return null;
   const sum = (xs: { n: number }[]) => xs.reduce((s, x) => s + x.n, 0);
   return { arriving: sum(arrivingBy), delivered: sum(deliveredBy), inTransit, arrivingBy, deliveredBy };
+}
+
+// ---- ESPN team schedule (site.api.espn.com …/teams/<id>/schedule), checked 2026-10-30 ----
+
+interface EspnCompetitor {
+  id?: string; homeAway?: string; winner?: boolean;
+  score?: { value?: number; displayValue?: string } | string;
+  team?: { id?: string; shortDisplayName?: string; displayName?: string; abbreviation?: string; logos?: { href?: string }[]; logo?: string };
+}
+interface EspnEvent {
+  date?: string;
+  competitions?: { competitors?: EspnCompetitor[]; status?: { type?: { completed?: boolean; state?: string } }; broadcasts?: { media?: { shortName?: string } }[] }[];
+}
+export interface EspnSchedule {
+  team?: { id?: string; shortDisplayName?: string; displayName?: string; logo?: string; recordSummary?: string };
+  events?: EspnEvent[];
+}
+
+function espnScore(s: EspnCompetitor['score']): number | null {
+  const v = typeof s === 'object' && s ? s.value ?? Number(s.displayValue) : Number(s);
+  return typeof v === 'number' && Number.isFinite(v) ? v : null;
+}
+
+function espnOpponent(c: EspnCompetitor): Opponent {
+  const t = c.team ?? {};
+  return { name: t.shortDisplayName ?? t.displayName ?? t.abbreviation ?? '', abbr: t.abbreviation ?? '', logo: t.logos?.[0]?.href ?? t.logo ?? null };
+}
+
+/** Finished games newest first (up to `max`) and the next unfinished game after `now`. */
+export function toTeamSchedule(j: EspnSchedule, teamId: string, now: number, max = 3): TeamSchedule {
+  const results: TeamResult[] = [];
+  let next: TeamSchedule['next'] = null;
+  for (const e of j.events ?? []) {
+    const comp = e.competitions?.[0];
+    const start = Date.parse(e.date ?? '');
+    const us = comp?.competitors?.find((c) => (c.id ?? c.team?.id) === teamId);
+    const them = comp?.competitors?.find((c) => c !== us);
+    if (!comp || !us || !them || !Number.isFinite(start)) continue;
+    if (comp.status?.type?.completed) {
+      const a = espnScore(us.score), b = espnScore(them.score);
+      const outcome = us.winner ? 'W' : them.winner ? 'L' : a != null && a === b ? 'T' : null;
+      results.push({ start, opponent: espnOpponent(them), home: us.homeAway === 'home', us: a, them: b, outcome });
+    } else if (!next && start > now - 6 * 3600e3) {
+      next = { start, opponent: espnOpponent(them), home: us.homeAway === 'home', tv: comp.broadcasts?.[0]?.media?.shortName ?? null };
+    }
+  }
+  results.sort((a, b) => b.start - a.start);
+  const t = j.team ?? {};
+  return { name: t.shortDisplayName ?? t.displayName ?? '', logo: t.logo ?? null, record: t.recordSummary ?? null, results: results.slice(0, max), next };
 }

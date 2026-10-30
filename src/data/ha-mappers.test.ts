@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { HassEntity } from 'home-assistant-js-websocket';
-import { channelMatches, toFlights, toForecast, toGame, mealieMinutes, splitQuantity, stepTitle, toLockState, toTvState, toMealPlan, toPackages, toRecipe, toRecipeSummary, toThermostat } from './ha-mappers';
+import { channelMatches, toFlights, toForecast, toGame, mealieMinutes, splitQuantity, stepTitle, toLockState, toTvState, toMealPlan, toPackages, toRecipe, toTeamSchedule, toRecipeSummary, toThermostat } from './ha-mappers';
 
 // Trimmed from the real climate.main_floor state on 2026-10-23.
 function ecobee(state: string, attrs: Record<string, unknown>): HassEntity {
@@ -298,5 +298,36 @@ describe('toPackages', () => {
 
   it('is null when the integration isn’t there', () => {
     expect(toPackages(get, ['sensor.nobody_mail_'])).toBeNull();
+  });
+});
+
+describe('toTeamSchedule', () => {
+  // Shapes from ESPN's college-football schedule for Georgia Tech (team 59), 2026-10-30.
+  const side = (id: string, abbr: string, name: string, homeAway: string, score: number | null, winner?: boolean) => ({
+    id, homeAway, winner, score: score == null ? undefined : { value: score, displayValue: String(score) },
+    team: { id, abbreviation: abbr, shortDisplayName: name, logos: [{ href: `https://logo/${abbr}.png` }] },
+  });
+  const game = (date: string, completed: boolean, comps: object[], tv?: string) => ({
+    date, competitions: [{ competitors: comps, status: { type: { completed } }, broadcasts: tv ? [{ media: { shortName: tv } }] : [] }],
+  });
+  const json = {
+    team: { id: '59', shortDisplayName: 'Georgia Tech', logo: 'https://logo/GT.png', recordSummary: '2-5' },
+    events: [
+      game('2026-09-04T00:00Z', true, [side('59', 'GT', 'Georgia Tech', 'home', 13, false), side('38', 'COLO', 'Colorado', 'away', 14, true)]),
+      game('2026-10-24T19:30Z', true, [side('59', 'GT', 'Georgia Tech', 'away', 27, true), side('99', 'DUKE', 'Duke', 'home', 20, false)]),
+      game('2026-10-31T23:30Z', false, [side('59', 'GT', 'Georgia Tech', 'away', null), side('221', 'PITT', 'Pitt', 'home', null)], 'ESPN2'),
+    ],
+  };
+
+  it('lists finals newest first and finds the next game', () => {
+    const s = toTeamSchedule(json, '59', Date.parse('2026-10-30T12:00Z'));
+    expect(s.record).toBe('2-5');
+    expect(s.results.map((r) => [r.opponent.abbr, r.home, r.us, r.them, r.outcome])).toEqual([['DUKE', false, 27, 20, 'W'], ['COLO', true, 13, 14, 'L']]);
+    expect(s.next).toMatchObject({ opponent: { name: 'Pitt', logo: 'https://logo/PITT.png' }, home: false, tv: 'ESPN2' });
+  });
+
+  it('copes with a season that hasn’t started', () => {
+    const s = toTeamSchedule({ team: {}, events: [] }, '59', Date.now());
+    expect(s).toMatchObject({ results: [], next: null, record: null });
   });
 });

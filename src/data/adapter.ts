@@ -226,6 +226,26 @@ export interface Game {
   tv: string | null;
 }
 
+/** One team's season from ESPN's schedule: finished games (newest first) and the next one. */
+export interface TeamSchedule {
+  name: string;
+  logo: string | null;
+  record: string | null; // "3-4"
+  results: TeamResult[];
+  next: { start: number; opponent: Opponent; home: boolean; tv: string | null } | null;
+}
+
+export interface Opponent { name: string; abbr: string; logo: string | null }
+
+export interface TeamResult {
+  start: number;
+  opponent: Opponent;
+  home: boolean;
+  us: number | null;
+  them: number | null;
+  outcome: 'W' | 'L' | 'T' | null;
+}
+
 export interface CalendarEvent {
   start: Date;
   end: Date;
@@ -295,6 +315,9 @@ export interface DataAdapter {
   clearCheckedGroceries(): Promise<void>;
   /** Email the open items through the HA package's script. */
   sendGroceries(): Promise<void>;
+
+  /** ESPN schedule for a Team Tracker sensor's team; null when it can't be loaded. */
+  getTeamSchedule(sensor: string): Promise<TeamSchedule | null>;
 
   // Recipes
   getRecipes(): Promise<RecipeSummary[] | null>;

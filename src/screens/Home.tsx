@@ -7,8 +7,7 @@ import { Icon, weatherIcon, weatherLabel } from '../components/Icon';
 import { Checkbox } from '../components/Checkbox';
 import { addDays, clockParts, fmtLongDate, fmtMinOfDay, fmtShortHm, fmtTime, hmToMin, isoDate, now, sameDay, startOfDay } from '../logic/time';
 import { deltaText, leaveByMin, sceneAt, trafficLevel, type Scene, type Traffic } from '../logic/schoolRun';
-import type { Flight, Game, GameSide, Thermostat } from '../data/adapter';
-import { finalText, gamesToShow, kickoff } from '../logic/sports';
+import type { Flight, Thermostat } from '../data/adapter';
 import { agenda } from '../logic/calendar';
 import { flightView, flightsToShow, onCalendar } from '../logic/flights';
 import { lockView } from '../components/lockView';
@@ -45,7 +44,6 @@ export function Home() {
         {scene === 'dinner' ? <DinnerCard /> : <SchoolCard scene={scene} />}
         <div class="home-col">
           <WeekCard />
-          <GamesCard />
           {enabled('reminders') && <Reminders />}
         </div>
         <div class="home-col">
@@ -300,46 +298,6 @@ function FlightRow({ f }: { f: Flight }) {
       )}
       {air && (f.altitude != null || f.speed != null) && (
         <span class="home-flight-sub">{[f.altitude != null ? Math.round(f.altitude).toLocaleString() + ' ft' : null, f.speed != null ? Math.round(f.speed * 1.151) + ' mph' : null].filter(Boolean).join(' · ')}</span>
-      )}
-    </div>
-  );
-}
-
-/** Followed teams: live games, last night's finals and this week's games. Hidden when there are none. */
-function GamesCard() {
-  const games = gamesToShow(useStore(adapter.state).games, now().getTime());
-  if (!games.length) return null;
-  return (
-    <section class="card home-games" aria-label="Games">
-      <span class="eyebrow">Games</span>
-      {games.map((g) => <GameRow key={g.id} g={g} />)}
-    </section>
-  );
-}
-
-function TeamLogo({ s }: { s: GameSide }) {
-  return <span class="home-game-logo">{s.logo ? <img src={s.logo} alt="" /> : s.abbr}</span>;
-}
-
-function GameRow({ g }: { g: Game }) {
-  const name = (s: GameSide) => (s.rank ? '#' + s.rank + ' ' : '') + s.name;
-  const status = g.state === 'pre' ? [kickoff(g.start, now()), g.tv].filter(Boolean).join(' · ')
-    : g.state === 'in' ? [g.clock ?? 'Live', g.tv].filter(Boolean).join(' · ')
-    : finalText(g);
-  return (
-    <div class="home-game">
-      <span class="home-game-logos"><TeamLogo s={g.team} /><TeamLogo s={g.opponent} /></span>
-      <span class="home-game-text">
-        <span class="home-game-title">{name(g.team)} {g.home ? 'vs' : 'at'} {name(g.opponent)}</span>
-        <span class={'home-game-sub' + (g.state === 'in' ? ' live' : '')}>
-          {g.state === 'in' && <span class="dot" style={{ width: '8px', height: '8px', background: 'var(--alert)' }} />}
-          {g.league} · {status}
-        </span>
-      </span>
-      {g.state !== 'pre' && g.team.score != null && g.opponent.score != null && (
-        <span class="home-game-score tnum" aria-label={`${g.team.name} ${g.team.score}, ${g.opponent.name} ${g.opponent.score}`}>
-          {g.team.score}<span class="home-game-dash">–</span>{g.opponent.score}
-        </span>
       )}
     </div>
   );
