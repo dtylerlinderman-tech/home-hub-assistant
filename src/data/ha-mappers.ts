@@ -121,14 +121,21 @@ export function stepTitle(text: string): string | undefined {
   return m ? m[1] : undefined;
 }
 
+/** Mealie fills a recipe started from scratch with a sample step about markdown and "1 Cup Flour". */
+const isMealieSampleStep = (text: string) => /support markdown syntax/i.test(text) && text.includes('demo.mealie.io');
+const isMealieSampleIngredient = (text: string) => /^1 cup flour$/i.test(text.trim());
+
 export function toRecipe(r: MealieRecipe, mealTags: string[], mealieUrl?: string): Recipe {
-  const ingredients: Ingredient[] = (r.ingredients ?? [])
+  const sample = (r.instructions ?? []).some((s) => isMealieSampleStep(s.text ?? ''));
+  let ingredients: Ingredient[] = (r.ingredients ?? [])
     .map((i) => ({ id: i.reference_id, ...splitQuantity(i.display || i.note || '') }))
     .filter((i) => i.name);
+  // Drop the sample flour so it never lands on the grocery list.
+  if (sample && (r.ingredients ?? []).length === 1 && isMealieSampleIngredient(r.ingredients![0].display || r.ingredients![0].note || '')) ingredients = [];
   // Mealie step titles are section headings ("Orzo") that apply until the next one.
   let section: string | undefined;
   const steps: RecipeStep[] = (r.instructions ?? [])
-    .filter((s) => s.text?.trim())
+    .filter((s) => s.text?.trim() && !isMealieSampleStep(s.text))
     .map((s) => {
       if (s.title?.trim()) section = s.title.trim();
       const refs = (s.ingredient_references ?? []).map((x) => x.reference_id);

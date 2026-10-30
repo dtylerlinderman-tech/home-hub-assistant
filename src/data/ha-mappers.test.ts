@@ -117,6 +117,16 @@ describe('Mealie mapping', () => {
     ]);
   });
 
+  it('drops the sample flour and markdown step Mealie puts in a new recipe', () => {
+    const sampleStep = { text: 'Recipe steps as well as other fields in the recipe page support markdown syntax.\n\n**Add a link**\n\n[My Link](https://demo.mealie.io)\n', title: null };
+    const r = toRecipe({ ...garlicChicken, ingredients: [{ reference_id: 'x', display: '1 Cup Flour', note: '' }], instructions: [sampleStep] }, TAGS);
+    expect(r.ingredients).toEqual([]);
+    expect(r.steps).toEqual([]);
+    // Real flour in a real recipe stays.
+    const real = toRecipe({ ...garlicChicken, ingredients: [{ reference_id: 'y', display: '1 Cup Flour', note: '' }] }, TAGS);
+    expect(real.ingredients.map((i) => i.name)).toEqual(['Flour']);
+  });
+
   it('keeps one dinner per day from the meal plan', () => {
     const plan = toMealPlan([
       { mealplan_date: '2026-10-24', entry_type: 'dinner', recipe: garlicChicken },

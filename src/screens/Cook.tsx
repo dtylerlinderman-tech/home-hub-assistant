@@ -56,7 +56,10 @@ export function Cook({ route }: { route: Route }) {
     );
   }
   const startStep = Math.max(0, (Number(route.query.get('step')) || 1) - 1);
-  return <CookBody key={id} recipe={recipe.value} awake={awake} startStep={startStep} />;
+  // A recipe saved without steps (just a name and tags) still opens, with a note in place of step 1.
+  const r = recipe.value.steps.length ? recipe.value
+    : { ...recipe.value, steps: [{ text: 'No steps yet. Add them to this recipe in Mealie and they’ll show up here.' }] };
+  return <CookBody key={id} recipe={r} awake={awake} startStep={startStep} />;
 }
 
 function CookHeader({ title, sub, step }: { title: string; sub: string; step?: string }) {
@@ -179,7 +182,7 @@ function CookBody({ recipe, awake, startStep }: { recipe: Recipe; awake: boolean
             )}
           </div>
           {recipe.ingredients.length === 0 && (
-            <span class="cook-ings-empty">{recipe.placeholder ? 'Ingredients will show up here once this recipe is added to Mealie.' : 'No ingredients listed.'}</span>
+            <span class="cook-ings-empty">{recipe.placeholder ? 'Ingredients will show up here once this recipe is added to Mealie.' : 'No ingredients yet. Add them in Mealie.'}</span>
           )}
           {recipe.ingredients.map((ing) => {
             const g = !!got[ing.id];
