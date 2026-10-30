@@ -408,7 +408,7 @@ function FrontDoor() {
     ? [lock.lastMethod, lock.lastChanged ? fmtTime(new Date(lock.lastChanged)) : null, lock.battery != null ? 'Battery ' + lock.battery + '%' : null].filter(Boolean).join(' · ')
     : lockSignInExpired ? 'Google sign-in expired · redo it in Home Assistant' : 'Lock not connected';
   return (
-    <section class="card home-door" aria-label="Front door">
+    <section class={'card home-door' + (compact ? ' compact' : '')} aria-label="Front door">
       <span class="eyebrow">Front door</span>
       {!compact && <a href={href('/door')} class="plain home-snap" aria-label="Open doorbell camera">
         <Snapshot url={doorbell?.snapshotUrl ?? null} />
@@ -431,6 +431,7 @@ function FrontDoor() {
           <span class="home-lock-sub">{sub}</span>
         </div>
       </div>
+      <PackagesRow />
       <div class="spacer" />
       <div class="home-door-btns">
         <a href={href('/door')} class="btn home-door-btn">View camera</a>
@@ -439,6 +440,28 @@ function FrontDoor() {
           : <a href={href('/door')} class="btn home-door-btn">Unlock</a>}
       </div>
     </section>
+  );
+}
+
+/** Packages from shipping emails; only shown when something is arriving, delivered today or on the way. */
+function PackagesRow() {
+  const p = useStore(adapter.state).packages;
+  if (!p || !(p.arriving || p.delivered || p.inTransit)) return null;
+  const byCarrier = (xs: { carrier: string; n: number }[]) => xs.map((x) => (xs.length > 1 ? x.carrier + ' ' + x.n : x.carrier)).join(' · ');
+  const title = p.arriving ? p.arriving + ' arriving today' : p.delivered ? p.delivered + ' delivered today' : p.inTransit + ' on the way';
+  const sub = [
+    p.arriving ? byCarrier(p.arrivingBy) : p.delivered ? byCarrier(p.deliveredBy) : null,
+    p.arriving && p.delivered ? p.delivered + ' delivered' : null,
+    (p.arriving || p.delivered) && p.inTransit ? p.inTransit + ' on the way' : null,
+  ].filter(Boolean).join(' · ');
+  return (
+    <div class="home-pkg" aria-label={'Packages: ' + title}>
+      <span class="home-pkg-icon"><Icon name="package" size={22} /></span>
+      <div class="home-pkg-text">
+        <span class="home-pkg-title">{title}</span>
+        {sub && <span class="home-pkg-sub">{sub}</span>}
+      </div>
+    </div>
   );
 }
 

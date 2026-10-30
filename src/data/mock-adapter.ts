@@ -109,6 +109,7 @@ export class MockAdapter implements DataAdapter {
       vacuum: this.robot?.state ?? null,
       games: mockGames(),
       flights: mockFlights(),
+      packages: { arriving: 2, delivered: 1, inTransit: 3, arrivingBy: [{ carrier: 'Amazon', n: 1 }, { carrier: 'UPS', n: 1 }], deliveredBy: [{ carrier: 'USPS', n: 1 }] },
     };
     this.state = createStore<HubState>(this.online);
 
@@ -136,7 +137,7 @@ export class MockAdapter implements DataAdapter {
     this.offline = off;
     this.state.set(off
       ? {
-        ...this.online, weather: null, lock: null, doorbell: null, reminders: null, groceries: null, schoolRun: null,
+        ...this.online, weather: null, lock: null, doorbell: null, reminders: null, groceries: null, packages: null, schoolRun: null,
         climate: this.online.climate.map((c) => ({ ...c, available: false })),
         tvs: this.online.tvs.map((t) => ({ ...t, available: false })),
         kids: this.online.kids.map((k) => ({ ...k, items: null })),

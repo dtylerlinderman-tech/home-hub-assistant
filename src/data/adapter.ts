@@ -172,6 +172,16 @@ export interface HubState {
   vacuum: Vacuum | null; // null = no vacuum configured or not connected
   games: Game[]; // one per followed team (Team Tracker), whatever its state
   flights: Flight[]; // tracked by Flightradar24 (added from calendar flight numbers by the HA package)
+  packages: Packages | null; // Mail and Packages (shipping emails); null = not configured
+}
+
+/** Package counts from shipping emails (Mail and Packages), summed over every inbox. */
+export interface Packages {
+  arriving: number; // out for delivery today
+  delivered: number; // delivered today
+  inTransit: number; // shipped, not here yet
+  arrivingBy: { carrier: string; n: number }[];
+  deliveredBy: { carrier: string; n: number }[];
 }
 
 /** A tracked flight. Times are epoch ms; null when Flightradar24 doesn't know them yet. */

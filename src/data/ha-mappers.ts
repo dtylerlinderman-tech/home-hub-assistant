@@ -3,7 +3,7 @@
 import type { HassEntity } from 'home-assistant-js-websocket';
 import type {
   FanMode, Flight, ForecastPoint, Game, GameSide, HvacAction, HvacMode, Ingredient, LockState, MealPlanDay, MissionResult, Recipe, RecipeStep, RecipeSummary,
-  Thermostat, TodoItem, TvState, Vacuum, VacuumMission, VacuumStatus,
+  Packages, Thermostat, TodoItem, TvState, Vacuum, VacuumMission, VacuumStatus,
 } from './adapter';
 import { parseDuration } from '../logic/timers';
 
@@ -496,4 +496,34 @@ export interface HaTodoItem { uid: string; summary: string; status: 'needs_actio
 export function toTodoItems(raw: HaTodoItem[] | null | undefined): TodoItem[] {
   const items = (raw ?? []).filter((i) => i.uid && i.summary?.trim()).map((i) => ({ uid: i.uid, summary: i.summary.trim(), done: i.status === 'completed', due: null }));
   return [...items.filter((i) => !i.done), ...items.filter((i) => i.done)];
+}
+
+// ---- Mail and Packages (moralmunky/Home-Assistant-Mail-And-Packages) ----
+
+/** [carrier, "out for delivery" sensor suffix, "delivered" sensor suffix]. */
+const CARRIERS: [string, string, string][] = [
+  ['Amazon', 'amazon_packages_delivering', 'amazon_packages_delivered'],
+  ['UPS', 'ups_delivering', 'ups_delivered'],
+  ['FedEx', 'fedex_delivering', 'fedex_delivered'],
+  ['USPS', 'usps_delivering', 'usps_delivered'],
+  ['DHL', 'dhl_delivering', 'dhl_delivered'],
+  ['Walmart', 'walmart_delivering', 'walmart_delivered'],
+  ['Etsy', 'etsy_delivering', 'etsy_delivered'],
+];
+
+/** Counts summed over each inbox's sensor prefix. null when none of the sensors exist. */
+export function toPackages(get: (id: string) => HassEntity | null, prefixes: string[]): Packages | null {
+  let found = false;
+  const count = (suffix: string) => prefixes.reduce((sum, p) => {
+    const e = get(p + suffix);
+    if (e) found = true;
+    const n = Number(e?.state);
+    return sum + (Number.isFinite(n) && n > 0 ? Math.round(n) : 0);
+  }, 0);
+  const arrivingBy = CARRIERS.map(([carrier, out]) => ({ carrier, n: count(out) })).filter((c) => c.n > 0);
+  const deliveredBy = CARRIERS.map(([carrier, , done]) => ({ carrier, n: count(done) })).filter((c) => c.n > 0);
+  const inTransit = count('packages_in_transit');
+  if (!found) return null;
+  const sum = (xs: { n: number }[]) => xs.reduce((s, x) => s + x.n, 0);
+  return { arriving: sum(arrivingBy), delivered: sum(deliveredBy), inTransit, arrivingBy, deliveredBy };
 }

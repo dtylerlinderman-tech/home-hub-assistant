@@ -55,6 +55,11 @@ export interface HubConfig {
   idleMinutes?: number;
   /** Flightradar24's tracked-flights sensor. Default sensor.flightradar24_additional_tracked. */
   flights?: string;
+  /**
+   * Mail and Packages (HACS) sensors, one prefix per inbox, e.g. "sensor.you_gmail_com_mail_".
+   * The Front Door card shows packages arriving and delivered today.
+   */
+  packages?: { sensorPrefixes: string[] };
   /** Team Tracker sensors (sensor.*) for the game-day card on Home. */
   sports?: string[];
   /**
@@ -92,6 +97,7 @@ export const DEFAULT_CONFIG: HubConfig = {
   mealie: { mealTags: ['Weeknight', 'Kids', 'Grill', 'Slow cooker'], shoppingList: 'todo.mealie_groceries', sendListTo: 'Sam' },
   vacuum: { name: 'Roomba', entity: 'vacuum.roomba' },
   sports: ['sensor.falcons', 'sensor.gt_football', 'sensor.gt_basketball'],
+  packages: { sensorPrefixes: ['sensor.mail_'] },
 };
 
 /** `sampleOnly`: mock mode uses the prototype household and ignores config.json. */

@@ -10,7 +10,7 @@ import {
 } from 'home-assistant-js-websocket';
 import { createStore } from '../store';
 import {
-  lastCleanedByRoom, roombaMapSvg, toLockState, toTodoItems, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
+  lastCleanedByRoom, roombaMapSvg, toLockState, toPackages, toTodoItems, toMealPlan, toMission, toRecipe, toRecipeSummary, toFlights, toForecast, toGame, toThermostat, toTvState, toVacuum,
   type HaForecast, type HaTodoItem, type RoombaMissionRecord, type RoombaRoom,
   type MealieMealplan, type MealieRecipe, type MealieRecipeSummary,
 } from './ha-mappers';
@@ -109,6 +109,7 @@ export class HaAdapter implements DataAdapter {
         : null,
       games: [],
       flights: [],
+      packages: null,
     });
   }
 
@@ -205,6 +206,7 @@ export class HaAdapter implements DataAdapter {
       vacuum: this.vacuum(),
       games: (this.cfg.sports ?? []).flatMap((id) => toGame(this.entity(id)) ?? []),
       flights: toFlights(this.entity(this.cfg.flights ?? 'sensor.flightradar24_additional_tracked')),
+      packages: this.cfg.packages ? toPackages((id) => this.entity(id), this.cfg.packages.sensorPrefixes) : null,
       doorbell: this.doorbell(),
       tvs: this.cfg.tvs.map((t) => toTvState(t.name, this.entity(t.player), this.entity(t.cast), this.hassUrl)),
       lock: toLockState(

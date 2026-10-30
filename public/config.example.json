@@ -116,5 +116,10 @@
     "shoppingList": "todo.mealie_groceries",
     "sendListTo": "Sam"
   },
-  "notifyTarget": "notify.mobile_app_alexs_phone"
+  "notifyTarget": "notify.mobile_app_alexs_phone",
+  "packages": {
+    "sensorPrefixes": [
+      "sensor.you_gmail_com_mail_"
+    ]
+  }
 }

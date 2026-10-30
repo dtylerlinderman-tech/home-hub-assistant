@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { HassEntity } from 'home-assistant-js-websocket';
-import { channelMatches, toFlights, toForecast, toGame, mealieMinutes, splitQuantity, stepTitle, toLockState, toTvState, toMealPlan, toRecipe, toRecipeSummary, toThermostat } from './ha-mappers';
+import { channelMatches, toFlights, toForecast, toGame, mealieMinutes, splitQuantity, stepTitle, toLockState, toTvState, toMealPlan, toPackages, toRecipe, toRecipeSummary, toThermostat } from './ha-mappers';
 
 // Trimmed from the real climate.main_floor state on 2026-10-23.
 function ecobee(state: string, attrs: Record<string, unknown>): HassEntity {
@@ -278,5 +278,25 @@ describe('toFlights', () => {
   it('is empty without the sensor or its list', () => {
     expect(toFlights(null)).toEqual([]);
     expect(toFlights(ent('sensor.flightradar24_additional_tracked', '0', {}))).toEqual([]);
+  });
+});
+
+describe('toPackages', () => {
+  const states: Record<string, string> = {
+    'sensor.a_mail_amazon_packages_delivering': '2', 'sensor.a_mail_ups_delivering': '1', 'sensor.a_mail_usps_delivered': '1',
+    'sensor.a_mail_packages_in_transit': '4', 'sensor.b_mail_amazon_packages_delivering': '1', 'sensor.b_mail_fedex_delivered': 'unknown',
+  };
+  const get = (id: string) => (id in states ? ({ entity_id: id, state: states[id], attributes: {} } as unknown as HassEntity) : null);
+
+  it('sums every inbox and breaks arrivals down by carrier', () => {
+    expect(toPackages(get, ['sensor.a_mail_', 'sensor.b_mail_'])).toEqual({
+      arriving: 4, delivered: 1, inTransit: 4,
+      arrivingBy: [{ carrier: 'Amazon', n: 3 }, { carrier: 'UPS', n: 1 }],
+      deliveredBy: [{ carrier: 'USPS', n: 1 }],
+    });
+  });
+
+  it('is null when the integration isn’t there', () => {
+    expect(toPackages(get, ['sensor.nobody_mail_'])).toBeNull();
   });
 });

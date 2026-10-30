@@ -139,6 +139,8 @@ All optional. Anything you don't connect shows "Not connected" or stays hidden. 
 | Weather | Built in (met.no) | 3 | Free, no setup |
 | Games card | Team Tracker (HACS) | — | Pick your teams in `config.json` |
 | Flight card | Flightradar24 (HACS) + flight numbers in your calendar | — | Free, no account |
+| Packages arriving today (Front Door card) | Mail and Packages (HACS) reading your shipping emails | — | Free; needs a Gmail app password. List each inbox in `config.json` `packages.sensorPrefixes` |
+| Grocery list and "Send to …" email | Mealie shopping list + the SMTP integration | 11 | Free; needs a Gmail app password |
 
 ## 8. Putting it together, in order
 

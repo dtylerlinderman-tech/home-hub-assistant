@@ -363,3 +363,9 @@ test('meals: add ingredients fills the grocery list once', async ({ page }) => {
   await expect(page.getByText('Nothing new to add to Groceries')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('home: packages show in the Front Door card', async ({ page }) => {
+  const errors = await open(page, '/');
+  await expect(page.getByLabel('Packages: 2 arriving today')).toBeVisible();
+  expect(errors).toEqual([]);
+});
