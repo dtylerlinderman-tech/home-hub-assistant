@@ -90,6 +90,7 @@ On the laptop:
 | Screensaver | Screensaver | **Off.** The hub has its own photo frame |
 | Motion detection (Plus) | Enable visual motion detection | On (front camera) |
 | Motion detection (Plus) | Turn screen on on motion | On |
+| Advanced web settings | Enable JavaScript interface (Plus) | On (walking up dismisses the photo frame) |
 | Remote administration (Plus) | Enable remote administration | On, with a password you'll give Home Assistant in Part 7 |
 | Kiosk mode (Plus) | Enable kiosk mode | On, with an exit PIN you'll remember |
 
@@ -100,7 +101,7 @@ On the laptop:
 1. The first time, the hub shows the Home Assistant sign-in. Sign in as **`kitchen`** and tick **Keep me logged in**.
 2. The hub remembers the sign-in. If you ever clear Fully's cache or data, you'll sign in once more.
 
-**Check:** the Home screen shows the clock, temperatures, weather and the Front Door card with live data. After about 3 minutes without a touch, your family photo fades in; a tap brings the dashboard back.
+**Check:** the Home screen shows the clock, temperatures, weather and the Front Door card with live data. After about 3 minutes with no touch and no one in front of the camera, your family photo fades in; walking up or a tap brings the dashboard back.
 
 ## 7. Connect the tablet to Home Assistant
 

@@ -1,5 +1,6 @@
 // Photo frame: after a few minutes without a touch, show the background photo full screen and sharp,
 // with the time and weather in a corner. A tap brings the dashboard back (and only wakes it).
+// In Fully Kiosk, camera motion brings it back too and holds it off (needs Fully's JavaScript interface).
 import { useEffect, useState } from 'preact/hooks';
 import { adapter, config, params } from '../hub';
 import { useRoute } from '../router';
@@ -10,6 +11,14 @@ import { Icon, weatherIcon } from './Icon';
 /** ?idle=10 shortens the wait to 10 seconds, for testing. Read at use: config loads after this module. */
 const idleMs = () => (params.has('idle') ? Number(params.get('idle')) * 1000 : (config.idleMinutes ?? 3) * 60e3);
 
+/** Fully Kiosk's JavaScript interface (Advanced web settings → Enable JavaScript interface). */
+declare global {
+  interface Window { fully?: { bind(event: string, code: string): void } }
+}
+
+/** Fired on window for Fully's camera motion; dispatch it by hand to test. */
+export const MOTION_EVENT = 'kitchenhub-motion';
+
 export function PhotoIdle() {
   const route = useRoute();
   const [idle, setIdle] = useState(false);
@@ -18,13 +27,21 @@ export function PhotoIdle() {
     const ms = idleMs();
     let t = setTimeout(() => setIdle(true), ms);
     const wake = () => { clearTimeout(t); t = setTimeout(() => setIdle(true), ms); };
+    const motion = () => { setIdle(false); wake(); };
     const opts = { capture: true, passive: true };
     window.addEventListener('pointerdown', wake, opts);
     window.addEventListener('keydown', wake, opts);
+    window.addEventListener(MOTION_EVENT, motion);
+    try {
+      window.fully?.bind('onMotion', `window.dispatchEvent(new Event('${MOTION_EVENT}'))`);
+    } catch (e) {
+      console.warn('Fully motion binding failed', e);
+    }
     return () => {
       clearTimeout(t);
       window.removeEventListener('pointerdown', wake, opts);
       window.removeEventListener('keydown', wake, opts);
+      window.removeEventListener(MOTION_EVENT, motion);
     };
   }, []);
 
