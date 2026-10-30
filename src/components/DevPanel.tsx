@@ -42,7 +42,7 @@ export function DevPanel() {
       <button type="button" class="btn dev-btn" onClick={() => mock.setOffline(!mock.isOffline)}>
         {mock.isOffline ? 'Reconnect everything' : 'Show “Not connected” states'}
       </button>
-      <span class="dev-note">Demo PIN is 1234. Three wrong PINs lock the pad for 5 minutes.</span>
+      <span class="dev-note">Hold Unlock for 1 second. With ?pinpad: demo PIN 1234, three wrong PINs lock the pad for 5 minutes.</span>
     </div>
   );
 }

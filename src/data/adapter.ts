@@ -302,7 +302,8 @@ export interface DataAdapter {
   setPresetAll(preset: string): Promise<void>;
 
   // Door
-  unlock(pin: string): Promise<UnlockResult>;
+  /** pin only when config.door.pin is on; otherwise the press-and-hold control unlocks directly. */
+  unlock(pin?: string): Promise<UnlockResult>;
   lock(): Promise<void>;
 
   // TV

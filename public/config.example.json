@@ -19,7 +19,7 @@
     "camera": "camera.front_door",
     "doorbellEvent": "event.front_door_chime",
     "lock": "lock.front_door",
-    "unlockScript": "script.kitchen_unlock_front_door",
+    "unlockScript": "script.kitchen_hub_unlock_front_door",
     "relockSeconds": 30
   },
   "climate": [

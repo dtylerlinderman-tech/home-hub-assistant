@@ -326,13 +326,13 @@ export class MockAdapter implements DataAdapter {
 
   // ---- Door ----
 
-  async unlock(pin: string): Promise<UnlockResult> {
+  async unlock(pin?: string): Promise<UnlockResult> {
     await wait(250);
     const lock = this.online.lock;
     if (!lock) return { ok: false, reason: 'error', message: 'Lock not connected' };
     const t = nowMs();
     if (lock.pinLockoutUntil && lock.pinLockoutUntil > t) return { ok: false, reason: 'locked_out' };
-    if (pin !== DEMO_PIN) {
+    if (pin !== undefined && pin !== DEMO_PIN) {
       this.badPins = this.badPins.filter((x) => t - x < 5 * 60e3).concat(t);
       if (this.badPins.length >= 3) {
         this.badPins = [];

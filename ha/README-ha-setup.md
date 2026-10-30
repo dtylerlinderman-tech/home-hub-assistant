@@ -581,6 +581,7 @@ The file `ha/packages/kitchen_hub.yaml` in this repo adds everything the kitchen
 **Check:**
 
 - `script.kitchen_unlock_front_door`, `timer.kitchen_door_relock`, `timer.kitchen_door_lockout` and `input_boolean.kitchen_meal_rule_quick` appear in **Tools → States**.
-- On the kitchen screen's **Door** page, the PIN pad appears. A wrong PIN says "Wrong PIN, try again", and three wrong PINs lock the pad for 5 minutes. The right PIN unlocks the door and starts a 30-second relock countdown. Stand by the door the first time.
+- On the kitchen screen's **Door** page, **Hold to unlock** unlocks the door after a 1-second press (a quick tap does nothing) and starts a 30-second relock countdown. Stand by the door the first time.
+- **Want a PIN instead?** In , set  to  and  to . The PIN pad appears: a wrong PIN says "Wrong PIN, try again", and three wrong PINs lock the pad for 5 minutes.
 
-**To change the PIN later:** edit `secrets.yaml`, then **Tools → YAML → Scripts → Reload** (or restart).
+**To change the PIN later** (PIN mode only): edit `secrets.yaml`, then **Tools → YAML → Scripts → Reload** (or restart).

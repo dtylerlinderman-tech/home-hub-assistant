@@ -51,22 +51,40 @@ test('renders 03-cook at step 4 with a timer', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('door: wrong PIN, right PIN, relock countdown, lock now', async ({ page }) => {
+test('door: a tap does nothing, a 1-second hold unlocks, lock now', async ({ page }) => {
   const errors = await open(page, '/door?ring=1');
   await expect(page.getByText('Someone’s at the front door')).toBeVisible();
   await shot(page, '02-door-locked');
+  const hold = page.getByRole('button', { name: 'Hold to unlock' });
+  await hold.click();
+  await page.waitForTimeout(1300);
+  await expect(page.getByText('Locked', { exact: true })).toBeVisible();
+  await hold.hover();
+  await page.mouse.down();
+  await page.waitForTimeout(1200);
+  await page.mouse.up();
+  await expect(page.getByText(/Relocks automatically in \d+s/)).toBeVisible();
+  await shot(page, '02-door-unlocked');
+  await page.getByRole('button', { name: 'Lock now' }).click();
+  await expect(hold).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('door (PIN pad): wrong PIN, right PIN, relock countdown, lock now', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(`/?mock=1&nodev=1&pinpad=1&now=${TUE_1745}#/door?ring=1`);
   for (const d of '1111') await page.getByLabel('Digit ' + d).click();
   await expect(page.getByText('Wrong PIN, try again')).toBeVisible();
   for (const d of '1234') await page.getByLabel('Digit ' + d).click();
   await expect(page.getByText(/Relocks automatically in \d+s/)).toBeVisible();
-  await shot(page, '02-door-unlocked');
   await page.getByRole('button', { name: 'Lock now' }).click();
   await expect(page.getByText('Enter PIN to unlock')).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test('door: three wrong PINs lock the pad', async ({ page }) => {
-  await open(page, '/door');
+test('door (PIN pad): three wrong PINs lock the pad', async ({ page }) => {
+  await page.goto(`/?mock=1&nodev=1&pinpad=1&now=${TUE_1745}#/door`);
   for (let i = 0; i < 3; i++) {
     for (const d of '9999') await page.getByLabel('Digit ' + d).click();
     await page.waitForTimeout(300);

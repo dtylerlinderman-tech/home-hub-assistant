@@ -44,3 +44,16 @@
 .door-media { object-fit: contain; background: #0B0A09; transition: opacity 200ms ease; }
 .door-watch { margin-top: 8px; height: 56px; padding: 0 22px; border-radius: 18px; background: var(--raised); color: var(--text); font-size: 17px; font-weight: 800; gap: 10px; }
 .door-live-note { text-shadow: 0 1px 3px #000, 0 0 8px #000; }
+
+/* Hold to unlock: the fill sweeps across while the button is held. */
+.door-hold-msg { text-align: center; }
+.door-hold {
+  position: relative; overflow: hidden; height: 96px; border-radius: 22px; background: var(--raised); color: var(--text);
+  font-size: 22px; font-weight: 800; touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.door-hold:active { transform: none; filter: none; }
+.door-hold-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; transition-property: transform; transition-timing-function: linear; }
+.door-hold.holding .door-hold-fill { transform: scaleX(1); }
+.door-hold-label { position: relative; display: flex; align-items: center; gap: 12px; }
+.door-hold.holding .door-hold-label { color: var(--on-accent); }
+.door-hold:disabled { opacity: 0.6; }

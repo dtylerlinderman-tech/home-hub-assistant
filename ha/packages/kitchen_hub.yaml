@@ -148,6 +148,25 @@ script:
       - stop: Wrong PIN
         response_variable: result
 
+  # "Hold to unlock" on the kitchen screen (config.json door.unlockScript, no door.pin): unlock and start
+  # the relock countdown. Returns { ok: true }.
+  kitchen_hub_unlock_front_door:
+    alias: "Kitchen Hub: unlock front door (hold to unlock)"
+    icon: mdi:lock-open-variant
+    mode: single
+    sequence:
+      - action: lock.unlock
+        target:
+          entity_id: lock.front_door
+      - action: timer.start
+        target:
+          entity_id: timer.kitchen_door_relock
+      - variables:
+          result:
+            ok: true
+      - stop: Unlocked
+        response_variable: result
+
   # "Send to …" on the Groceries screen: emails the open items on the Mealie grocery list.
   # The email goes through HA's SMTP integration (Settings → Devices & services → SMTP), which holds
   # the Gmail app password. It goes to every SMTP recipient (SMTP → Add recipient; each is a notify entity).

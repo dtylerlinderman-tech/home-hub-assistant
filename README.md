@@ -24,7 +24,7 @@ Open <http://localhost:5173/?mock=1>. In Chrome DevTools, use the device toolbar
 Mock mode runs every screen on sample data. It turns on automatically when no Home Assistant URL is configured, or with `?mock=1`.
 The small **Mock** button in the bottom-right corner opens test controls:
 
-- **Ring the doorbell:** the Door screen takes over from any screen. Demo PIN is `1234`; three wrong PINs lock the pad for 5 minutes.
+- **Ring the doorbell:** the Door screen takes over from any screen. Hold **Unlock** for a second to unlock. Add `?pinpad` for the PIN-pad version (`door.pin` in config.json): demo PIN `1234`, three wrong PINs lock the pad for 5 minutes.
 - **Home card:** force the school drop-off, pick-up or dinner card.
 - **Finish running timers in 3 s:** test the cook-timer alert without waiting.
 - **Vacuum: Get stuck / Bin full:** see the vacuum warnings on Home and the Vacuum screen.

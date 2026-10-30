@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { adapter, act } from '../hub';
+import { adapter, act, config, params } from '../hub';
 import { useStore, useTick } from '../store';
 import { doorReturn, goBack, navigate, type Route } from '../router';
 import { Icon } from '../components/Icon';
@@ -15,6 +15,10 @@ const KEYS: [string, string, string][] = [
 ];
 
 const RECENT_RING_MS = 10 * 60e3;
+const HOLD_MS = 1000;
+
+/** PIN pad only when config.door.pin is on (?pinpad in mock mode, for its tests). */
+const usePin = () => !!config.door?.pin || (adapter.isMock && params.has('pinpad'));
 
 export function Door({ route }: { route: Route }) {
   useTick(500);
@@ -56,6 +60,15 @@ export function Door({ route }: { route: Route }) {
     else if (res.reason === 'error') setMsg({ text: res.message ?? 'Couldn’t unlock', error: true });
   }
 
+  async function holdUnlock() {
+    if (busy || !canUnlock) return;
+    setMsg(null);
+    setBusy(true);
+    const res = await act(adapter.unlock(), 'Couldn’t reach the lock. Try again.');
+    setBusy(false);
+    if (res && !res.ok) setMsg({ text: res.message ?? 'Couldn’t unlock', error: true });
+  }
+
   const dismiss = () => (route.query.has('ring') ? navigate(doorReturn.path, true) : goBack('/'));
 
   let status = msg;
@@ -88,6 +101,13 @@ export function Door({ route }: { route: Route }) {
           <div class="door-unlocked">
             <button type="button" class="btn door-lock-now" onClick={() => act(adapter.lock())}><Icon name="lock" size={24} stroke={2.2} />Lock now</button>
           </div>
+        ) : canUnlock && !usePin() ? (
+          <div class="door-unlocked">
+            <span class="door-pin-msg door-hold-msg" role="status" style={{ color: msg?.error ? 'var(--alert-text)' : 'var(--muted)' }}>
+              {busy ? 'Unlocking…' : msg?.text ?? 'Relocks by itself after ' + (config.door?.relockSeconds ?? 30) + ' seconds'}
+            </span>
+            <HoldButton disabled={busy} onHeld={holdUnlock} />
+          </div>
         ) : canUnlock ? (
           <div class="door-pin card">
             <div class="door-pin-head">
@@ -106,7 +126,7 @@ export function Door({ route }: { route: Route }) {
         ) : (
           <div class="door-pin card door-pin-off">
             <span>{!lock ? 'The lock isn’t connected yet.'
-              : !lock.pinUnlock && lock.state === 'locked' ? 'Unlocking with a PIN from the kitchen isn’t set up yet.'
+              : !lock.pinUnlock && lock.state === 'locked' ? 'Unlocking from the kitchen isn’t set up yet.'
               : 'The lock can’t be controlled right now.'}</span>
           </div>
         )}
@@ -114,6 +134,28 @@ export function Door({ route }: { route: Route }) {
         <button type="button" class="btn door-dismiss" onClick={dismiss}>Dismiss</button>
       </aside>
     </div>
+  );
+}
+
+/** Unlock needs a 1-second press so a stray tap (or a curious kid) doesn't open the door. */
+function HoldButton({ disabled, onHeld }: { disabled: boolean; onHeld: () => void }) {
+  const [holding, setHolding] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const start = () => {
+    if (disabled || timer.current) return;
+    setHolding(true);
+    timer.current = setTimeout(() => { timer.current = undefined; setHolding(false); onHeld(); }, HOLD_MS);
+  };
+  const cancel = () => { clearTimeout(timer.current); timer.current = undefined; setHolding(false); };
+  useEffect(() => cancel, []);
+  return (
+    <button type="button" class={'btn door-hold' + (holding ? ' holding' : '')} disabled={disabled} aria-label="Hold to unlock"
+      onPointerDown={start} onPointerUp={cancel} onPointerLeave={cancel} onPointerCancel={cancel} onContextMenu={(e) => e.preventDefault()}
+      onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); start(); } }}
+      onKeyUp={(e) => { if (e.key === 'Enter' || e.key === ' ') cancel(); }}>
+      <span class="door-hold-fill" style={{ transitionDuration: holding ? HOLD_MS + 'ms' : '150ms' }} />
+      <span class="door-hold-label"><Icon name="unlock" size={26} stroke={2.2} />{holding ? 'Keep holding…' : 'Hold to unlock'}</span>
+    </button>
   );
 }
 

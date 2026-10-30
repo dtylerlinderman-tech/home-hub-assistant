@@ -210,7 +210,7 @@ export class HaAdapter implements DataAdapter {
       lock: toLockState(
         this.entity(this.cfg.door?.lock),
         this.entity(this.cfg.door?.lastAction),
-        // PIN unlock goes through the HA script (kitchen_hub package), which checks the PIN server-side.
+        // Unlock goes through the HA script (kitchen_hub package), which also starts the relock timer.
         !!this.entity(this.cfg.door?.unlockScript),
         this.entity(PKG.relockTimer),
         this.entity(PKG.lockoutTimer),
@@ -507,10 +507,10 @@ export class HaAdapter implements DataAdapter {
   // ---- Front door lock ----
 
   /** PIN unlock through the package's script, which checks the PIN against secrets.yaml. */
-  async unlock(pin: string): Promise<UnlockResult> {
+  async unlock(pin?: string): Promise<UnlockResult> {
     const script = this.cfg.door?.unlockScript;
-    if (!this.conn || !script || !this.entity(script)) return { ok: false, reason: 'error', message: 'PIN unlock isn’t set up yet' };
-    const res = (await callService(this.conn, 'script', script.replace(/^script./, ''), { pin }, undefined, true)) as {
+    if (!this.conn || !script || !this.entity(script)) return { ok: false, reason: 'error', message: 'Unlocking from the kitchen isn’t set up yet' };
+    const res = (await callService(this.conn, 'script', script.replace(/^script./, ''), pin === undefined ? {} : { pin }, undefined, true)) as {
       response?: { ok?: boolean; reason?: string };
     };
     const r = res.response;

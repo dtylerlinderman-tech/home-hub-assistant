@@ -17,7 +17,9 @@ export interface HubConfig {
     lock?: string;
     /** Nest x Yale "Last Action" sensor (Keypad / Physical / Remote). */
     lastAction?: string;
+    /** HA script the Unlock control runs. Without a PIN: hold to unlock; with door.pin: the PIN pad (checked by the script). */
     unlockScript?: string;
+    pin?: boolean;
     relockSeconds: number;
   };
   climate: { name: string; entity: string }[];
