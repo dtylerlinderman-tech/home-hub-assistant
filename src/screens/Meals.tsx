@@ -85,7 +85,7 @@ export function Meals() {
     const ids = current.filter((x): x is string => !!x);
     const added = await act(adapter.addIngredients(ids), 'Couldn’t add the ingredients.');
     if (added === undefined) return;
-    flash(added ? `Added ${added} ingredient${added === 1 ? '' : 's'} to Groceries` : 'Everything’s already on the grocery list');
+    flash(added ? `Added ${added} ingredient${added === 1 ? '' : 's'} to Groceries` : 'Nothing new to add to Groceries');
   }
 
   const connected = data.value?.plan !== null && recipes !== null;

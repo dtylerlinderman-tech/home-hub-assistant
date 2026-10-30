@@ -168,7 +168,8 @@ test('meals: suggest a week, swap a day, add the ingredients', async ({ page }) 
   await expect(page.getByText('Leftovers night')).toBeVisible();
   await page.getByLabel('Swap Mon meal').click();
   await page.getByRole('button', { name: 'Add ingredients' }).click();
-  await expect(page.getByText(/Added \d+ ingredients to Groceries/)).toBeVisible();
+  // The suggested week is random, so it may bring no new ingredients.
+  await expect(page.getByText(/Added \d+ ingredients? to Groceries|Nothing new to add to Groceries/)).toBeVisible();
 });
 
 test('recipes: search, filter and import from a link', async ({ page }) => {
@@ -341,6 +342,6 @@ test('meals: add ingredients fills the grocery list once', async ({ page }) => {
   await page.getByRole('button', { name: 'Add ingredients' }).click();
   await expect(page.getByText(/Added \d+ ingredients to Groceries/)).toBeVisible();
   await page.getByRole('button', { name: 'Add ingredients' }).click();
-  await expect(page.getByText('Everything’s already on the grocery list')).toBeVisible();
+  await expect(page.getByText('Nothing new to add to Groceries')).toBeVisible();
   expect(errors).toEqual([]);
 });

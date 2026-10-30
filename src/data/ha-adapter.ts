@@ -130,7 +130,14 @@ export class HaAdapter implements DataAdapter {
 
     const conn = await this.retry(() => createConnection({ auth }));
     this.conn = conn;
-    conn.addEventListener('ready', () => this.set({ connection: 'connected' }));
+    conn.addEventListener('ready', () => {
+      this.set({ connection: 'connected' });
+      // After an HA restart the library re-sends the grocery subscription before the todo entity is back,
+      // and it fails quietly. Drop it; subscribeGroceries() starts a fresh one once the entity reappears.
+      const old = this.unsubGroceries;
+      this.unsubGroceries = undefined;
+      if (old) Promise.resolve().then(old).catch(() => {});
+    });
     conn.addEventListener('disconnected', () => this.set({ connection: 'disconnected' }));
     conn.addEventListener('reconnect-error', (_c, err) => {
       this.set({ connection: 'disconnected' });
