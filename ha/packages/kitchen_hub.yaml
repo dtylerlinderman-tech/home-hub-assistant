@@ -372,7 +372,7 @@ automation:
       - trigger: state
         entity_id: switch.d126_screen
         from: [unavailable, unknown]
-        to: "on"
+        not_to: [unavailable, unknown]
       - trigger: homeassistant
         event: start
     conditions:
@@ -397,7 +397,7 @@ automation:
       - trigger: state
         entity_id: switch.d126_screen
         from: [unavailable, unknown]
-        to: "on"
+        not_to: [unavailable, unknown]
     conditions:
       - condition: time
         after: "06:00:00"
