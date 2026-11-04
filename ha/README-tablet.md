@@ -105,14 +105,14 @@ On the laptop:
 
 ## 7. Connect the tablet to Home Assistant
 
-This lets the doorbell wake the screen, and lets the screen sleep overnight.
+This lets the doorbell bring up the camera view, and dims the screen overnight.
 
 1. **Settings → Devices & services → Add integration → Fully Kiosk Browser.** Enter the tablet's IP address and the remote admin password from Part 5 (port 2323, SSL off).
 2. The tablet appears as a device (ours: **D126**, entities `switch.d126_screen`, `button.d126_bring_to_foreground`, `number.d126_screen_off_timer`). If yours are named differently, change them in the "Tablet" section near the end of `/config/packages/kitchen_hub.yaml`.
-3. In Fully: **Motion Detection (Plus) → Turn screen on on motion** on. The integration has no motion sensor, so night mode leans on Fully: at 10 PM Home Assistant sets Fully's screen-off timer to 2 minutes, Fully wakes the screen when someone walks up, and at 6 AM the timer goes back to "never".
+3. The screen never turns off. At 10 PM Home Assistant dims it to about 10% (Fully brightness 25 of 255), and at 6 AM it goes back to full. Both re-apply whenever the tablet comes back online, so a reboot or Wi-Fi drop can't leave it in the wrong mode. Keep Fully's **Motion Detection** on: walking up dismisses the photo frame.
 4. **Settings → Tools → YAML → Check configuration**, then **Reload → Automations**. The three **Kitchen Hub (tablet)** automations are on as soon as they load.
 
-**Check:** turn the screen off from the device page in Home Assistant, then ring the doorbell. The screen comes on with the doorbell view. After 10 PM, the screen goes dark after 2 idle minutes and comes back when you walk up.
+**Check:** ring the doorbell and the doorbell view comes up. After 10 PM the screen is dimmed but still on; at 6 AM it's back to full brightness.
 
 ## 8. Updating the app later
 

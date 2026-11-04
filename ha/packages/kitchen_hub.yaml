@@ -341,8 +341,8 @@ automation:
           value: "{{ trigger.event.data.flight_number or trigger.event.data.callsign }}"
 
   # ---- Tablet: 11" tablet (device "D126") in Fully Kiosk (Fully Kiosk Browser integration) ----
-  # The integration has no motion sensor, so night mode uses Fully's own screen-off timer: Fully turns the
-  # screen off after 2 minutes idle and wakes it on motion (Fully: Motion Detection → Turn screen on on motion).
+  # The screen never turns off: it dims from 10 PM to 6 AM (brightness is 0–255 in Fully) and goes back to full
+  # in the morning. Both re-apply when the tablet comes back online, so it can't get stuck in the wrong mode.
 
   - id: kitchen_hub_doorbell_wakes_tablet
     alias: "Kitchen Hub (tablet): doorbell wakes the screen"
@@ -362,7 +362,7 @@ automation:
           entity_id: button.d126_bring_to_foreground
 
   - id: kitchen_hub_tablet_night_mode
-    alias: "Kitchen Hub (tablet): screen sleeps 10 PM–6 AM, wakes on motion"
+    alias: "Kitchen Hub (tablet): dim the screen 10 PM–6 AM"
     mode: single
     triggers:
       - trigger: time
@@ -384,10 +384,18 @@ automation:
         target:
           entity_id: number.d126_screen_off_timer
         data:
-          value: 120
+          value: 0
+      - action: switch.turn_on
+        target:
+          entity_id: switch.d126_screen
+      - action: number.set_value
+        target:
+          entity_id: number.d126_screen_brightness
+        data:
+          value: 25
 
   - id: kitchen_hub_tablet_day_mode
-    alias: "Kitchen Hub (tablet): screen stays on 6 AM–10 PM"
+    alias: "Kitchen Hub (tablet): full brightness 6 AM–10 PM"
     mode: single
     triggers:
       - trigger: time
@@ -411,5 +419,10 @@ automation:
       - action: switch.turn_on
         target:
           entity_id: switch.d126_screen
+      - action: number.set_value
+        target:
+          entity_id: number.d126_screen_brightness
+        data:
+          value: 255
 
   # Kids' task reset (HANDOFF §6) is left out while the to-do lists are parked.
