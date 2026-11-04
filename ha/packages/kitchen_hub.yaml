@@ -367,6 +367,18 @@ automation:
     triggers:
       - trigger: time
         at: "22:00:00"
+      # Also when the tablet comes back after being unreachable (reboot, Wi-Fi drop, new address),
+      # so it never stays stuck in the wrong mode.
+      - trigger: state
+        entity_id: switch.d126_screen
+        from: [unavailable, unknown]
+        to: "on"
+      - trigger: homeassistant
+        event: start
+    conditions:
+      - condition: time
+        after: "22:00:00"
+        before: "06:00:00"
     actions:
       - action: number.set_value
         target:
@@ -382,6 +394,10 @@ automation:
         at: "06:00:00"
       - trigger: homeassistant
         event: start
+      - trigger: state
+        entity_id: switch.d126_screen
+        from: [unavailable, unknown]
+        to: "on"
     conditions:
       - condition: time
         after: "06:00:00"
