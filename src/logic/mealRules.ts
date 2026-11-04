@@ -11,7 +11,7 @@ export type RuleKey = 'quick' | 'grill' | 'slow' | 'leftovers';
 export type Rules = Record<RuleKey, boolean>;
 
 export const RULE_DEFS: { key: RuleKey; label: string; sub: string }[] = [
-  { key: 'quick', label: 'Quick weeknights', sub: 'Mon–Thu: 35 min or less' },
+  { key: 'quick', label: 'Quick weeknights', sub: 'Mon–Thu: Weeknight meals, or 35 min or less' },
   { key: 'grill', label: 'Grill Saturday', sub: 'Saturday picks from grill meals' },
   { key: 'slow', label: 'Slow cooker Sunday', sub: 'Sunday picks from slow cooker meals' },
   { key: 'leftovers', label: 'Leftovers Wednesday', sub: 'Skip cooking midweek' },
@@ -27,13 +27,25 @@ export function isLeftoversDay(day: number, rules: Rules): boolean {
   return rules.leftovers && day === LEFTOVERS_DAY;
 }
 
+/** The rule that limits this day, if it's on: Mon–Thu quick, Saturday grill, Sunday slow cooker. */
+function dayRule(day: number, rules: Rules): ((m: PoolMeal) => boolean) | null {
+  if (rules.quick && day <= 3) return (m) => m.tags.includes('Weeknight') || m.mins <= QUICK_MAX_MINS;
+  if (rules.grill && day === 5) return (m) => m.tags.includes('Grill');
+  if (rules.slow && day === 6) return (m) => m.tags.includes('Slow cooker');
+  return null;
+}
+
+/** Meals a rule allows on this day. A rule no meal fits yet (say, nothing tagged Slow cooker) is ignored for that day. */
 export function eligible(pool: PoolMeal[], day: number, rules: Rules): PoolMeal[] {
-  return pool.filter((m) => {
-    if (rules.quick && day <= 3 && m.mins > QUICK_MAX_MINS) return false;
-    if (rules.grill && day === 5 && !m.tags.includes('Grill')) return false;
-    if (rules.slow && day === 6 && !m.tags.includes('Slow cooker')) return false;
-    return true;
-  });
+  const ok = dayRule(day, rules);
+  const fits = ok ? pool.filter(ok) : pool;
+  return fits.length ? fits : pool;
+}
+
+/** Rules that are on but match no meal in the pool, so they're being ignored. */
+export function unmatchedRules(pool: PoolMeal[], rules: Rules): RuleKey[] {
+  const days: [RuleKey, number][] = [['quick', 0], ['grill', 5], ['slow', 6]];
+  return days.filter(([k, d]) => rules[k] && pool.length > 0 && !pool.some(dayRule(d, rules)!)).map(([k]) => k);
 }
 
 /**

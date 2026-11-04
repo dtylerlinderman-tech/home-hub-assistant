@@ -5,7 +5,10 @@ import { useAsync } from '../useAsync';
 import { href } from '../router';
 import { Icon } from '../components/Icon';
 import { Toggle } from '../components/Toggle';
-import { EATING_OUT, RULE_DEFS, isLeftoversDay, suggestWeek, swapDay, type PlanDay, type PoolMeal } from '../logic/mealRules';
+import { EATING_OUT, RULE_DEFS, isLeftoversDay, suggestWeek, swapDay, unmatchedRules, type PlanDay, type PoolMeal, type RuleKey } from '../logic/mealRules';
+
+/** The tag each day rule looks for, for its 'nothing tagged yet' note. */
+const RULE_TAG: Partial<Record<RuleKey, string>> = { quick: 'Weeknight', grill: 'Grill', slow: 'Slow cooker' };
 import { addDays, fmtMins, fmtWeekRange, isoDate, now, sameDay, startOfWeek } from '../logic/time';
 import type { MealPlanDay, RecipeSummary } from '../data/adapter';
 import './meals.css';
@@ -74,6 +77,7 @@ export function Meals() {
     await save(changes.map(({ date, recipeId }) => ({ date, recipeId })));
   }
 
+  const unmatched = unmatchedRules(pool, rules);
   const shuffle = () => write(suggestWeek(pool, rules, lastWeek, Math.random, keep));
   const swap = (i: number) => write(swapDay(pool, rules, current, i, lastWeek), i);
   const choose = (i: number, recipeId: PlanDay, noteTitle?: string) => {
@@ -148,7 +152,9 @@ export function Meals() {
           <span class="eyebrow">Suggestion rules</span>
           {RULE_DEFS.map((r) => (
             <button key={r.key} type="button" class="btn meals-rule" role="switch" aria-checked={rules[r.key]} onClick={() => act(adapter.setMealRule(r.key, !rules[r.key]))}>
-              <span class="meals-rule-text"><span class="meals-rule-label">{r.label}</span><span class="meals-rule-sub">{r.sub}</span></span>
+              <span class="meals-rule-text"><span class="meals-rule-label">{r.label}</span><span class="meals-rule-sub" style={unmatched.includes(r.key) ? { color: 'var(--accent)' } : undefined}>
+                {unmatched.includes(r.key) ? 'No meals tagged ' + RULE_TAG[r.key] + ' yet, so any meal is used' : r.sub}
+              </span></span>
               <Toggle on={rules[r.key]} />
             </button>
           ))}

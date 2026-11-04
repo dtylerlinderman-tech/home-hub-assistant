@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eligible, suggestWeek, swapDay, type PoolMeal, type Rules } from './mealRules';
+import { eligible, suggestWeek, swapDay, unmatchedRules, type PoolMeal, type Rules } from './mealRules';
 import { parseDuration, timerLabel } from './timers';
 import { deltaText, leaveByMin, sceneAt, trafficLevel, usualFromHistory, usualMinutes, type SchoolRunConfig } from './schoolRun';
 import { matchIngredients } from './ingredients';
@@ -28,9 +28,29 @@ function seeded(seed: number) {
 }
 
 describe('mealRules', () => {
-  it('limits Mon–Thu to quick meals', () => {
-    for (const d of [0, 1, 2, 3]) expect(eligible(pool, d, allOn).every((m) => m.mins <= 35)).toBe(true);
+  it('limits Mon–Thu to quick meals: tagged Weeknight, or 35 min or less', () => {
+    for (const d of [0, 1, 2, 3]) expect(eligible(pool, d, allOn).every((m) => m.mins <= 35 || m.tags.includes('Weeknight'))).toBe(true);
+    expect(eligible(pool, 0, allOn).map((m) => m.id)).not.toContain('pizza');
     expect(eligible(pool, 4, allOn).some((m) => m.mins > 35)).toBe(true);
+  });
+
+  it('works with real Mealie data: no cook times, nothing tagged Slow cooker', () => {
+    // Recipes saved by name only have no time (Infinity) — the Weeknight tag is what makes them quick.
+    const real: PoolMeal[] = [
+      { id: 'tacos', name: 'Beef Tacos', mins: Infinity, tags: ['Weeknight', 'Kids'] },
+      { id: 'ziti', name: 'Baked Ziti', mins: Infinity, tags: ['Kids'] },
+      { id: 'brats', name: 'Beef Brats', mins: Infinity, tags: ['Weeknight', 'Grill'] },
+      { id: 'stirfry', name: 'Chicken Stir Fry', mins: Infinity, tags: ['Weeknight'] },
+      { id: 'quesadillas', name: 'Chicken Quesadillas', mins: Infinity, tags: ['Weeknight', 'Kids'] },
+      { id: 'cutlets', name: 'Chicken Cutlets', mins: Infinity, tags: ['Weeknight'] },
+      { id: 'wings', name: 'Chicken Wings', mins: Infinity, tags: ['Grill'] },
+    ];
+    const rules: Rules = { quick: true, grill: true, slow: true, leftovers: false };
+    const week = suggestWeek(real, rules, [], seeded(7));
+    expect(week.every((d) => d !== null)).toBe(true);
+    for (const d of [0, 1, 2, 3]) expect(['tacos', 'brats', 'stirfry', 'quesadillas', 'cutlets']).toContain(week[d]);
+    expect(['brats', 'wings']).toContain(week[5]);
+    expect(unmatchedRules(real, rules)).toEqual(['slow']);
   });
 
   it('grill Saturday and slow cooker Sunday', () => {
